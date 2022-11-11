@@ -1,0 +1,148 @@
+{
+  "sports": [
+    {
+      "id": 0,
+      "name": "Football",
+      "icon": "fa-solid fa-futbol",
+	  "availableTips": [
+		  "1",
+		  "x",
+		  "2",
+		  "1x",
+		  "x2",
+		  "12"
+	  ]
+    },
+    {
+      "id": 1,
+      "name": "Basketball",
+      "icon": "fa-solid fa-futbol",
+	  "availableTips": [
+		  "1",
+		  "x",
+		  "2",
+		  "1x",
+		  "x2",
+		  "12"
+	  ]
+    },
+    {
+      "id": 2,
+      "name": "Tennis",
+      "icon": "fa-solid fa-futbol",
+	  "availableTips": [
+		  "1",
+		  "x",
+		  "2",
+		  "1x",
+		  "x2",
+		  "12"
+	  ]
+    },
+    {
+      "id": 3,
+      "name": "Hockey",
+      "icon": "fa-solid fa-futbol",
+	  "availableTips": [
+		  "1",
+		  "x",
+		  "2",
+		  "1x",
+		  "x2",
+		  "12"
+	  ]
+    }
+  ],
+  "betting-pairs": [
+    {
+      "id": 1,
+      "firstOpponent": "Hajduk",
+      "secondOpponent": "Dinamo",
+      "matchStartUTC": "sri 15:30",
+      "sportId": 0,
+	  "categoryId": 0,
+	  "tips": [
+		  {"name": "1", "stake": 1.2},
+		  {"name": "x", "stake": 1.3},
+		  {"name": "2", "stake": 1.4},
+		  {"name": "1x", "stake": 1.5},
+		  {"name": "x2", "stake": 1.6},
+		  {"name": "12", "stake": 1.7}
+	  ]
+    },
+	 {
+      "id": 2,
+      "firstOpponent": "Rijeka",
+      "secondOpponent": "Zagreb",
+      "matchStartUTC": "pon 11:00",
+      "sportId": 0,
+	  "categoryId": 0,
+	  "tips": [
+		  {"name": "1", "stake": 1.2},
+		  {"name": "x", "stake": 1.2},
+		  {"name": "2", "stake": 1.2},
+		  {"name": "1x", "stake": 1.2},
+		  {"name": "x2", "stake": 1.2},
+		  {"name": "12", "stake": 1.2}
+	  ]
+    },
+	 {
+      "id": 3,
+      "firstOpponent": "Osijek",
+      "secondOpponent": "Varazdin",
+      "matchStartUTC": "sub 15:00",
+      "sportId": 0,
+	  "categoryId": 0,
+	  "tips": [
+		  {"name": "1", "stake": 1.2},
+		  {"name": "x", "stake": 1.2},
+		  {"name": "2", "stake": 1.2},
+		  {"name": "1x", "stake": 1.2},
+		  {"name": "x2", "stake": 1.2},
+		  {"name": "12", "stake": 1.2}
+	  ]
+    }
+  ],
+  "times": [
+	{
+	  "id": 0,
+	  "date": 0,
+	  "label": "5.sub",
+	  "queryId":"5"
+	},
+	{
+	  "id": 1,
+	  "date": 0,
+	  "label": "6.ned",
+	  "queryId":"6"
+	},
+	{
+	  "id": 2,
+	  "date": 0,
+	  "label": "7.pon",
+	  "queryId":"7"
+	},
+	{
+	  "id": 3,
+	  "date": 0,
+	  "label": "8.uto",
+	  "queryId":"8"
+	},
+	{
+	  "id": 4,
+	  "date": 0,
+	  "label": "9.sri",
+	  "queryId":"9"
+	},
+	{
+	  "id": 5,
+	  "date": 0,
+	  "label": "10.cet",
+	  "queryId":"10"
+	}
+	
+	
+	
+	
+  ]
+}
