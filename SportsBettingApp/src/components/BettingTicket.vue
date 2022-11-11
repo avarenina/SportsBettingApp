@@ -410,7 +410,8 @@
                 this.$store.dispatch('removeFromSelectedPairList', bettingPair);
             },
             showNotification(message: string) {
-                this.$store.dispatch('showGlobalNotification', { id: 0, type: 'success', message: 'test msg', duration: 4000 });
+            
+                this.$store.dispatch('showGlobalNotification', { id: 0, type: 'success', message: message, duration: 4000 });
             }
 
     }
