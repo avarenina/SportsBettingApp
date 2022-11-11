@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using SportsBettingApp_Backend.Models;
+using SportsBettingApp_Backend.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace SportsBettingApp_Backend.Controllers
 {
@@ -6,26 +9,25 @@ namespace SportsBettingApp_Backend.Controllers
     [Route("[controller]")]
     public class DataController : ControllerBase
     {
-        
 
+
+        private readonly DataContext _context;
         private readonly ILogger<DataController> _logger;
 
-        public DataController(ILogger<DataController> logger)
+        public DataController(ILogger<DataController> logger, DataContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
 
-
-        [HttpGet(Name = "GetBettingDays")]
-        public IEnumerable<BettingDay> Get()
+        [Route("GetSports")]
+        [HttpGet]
+        public async Task<IEnumerable<Sport>> GetSportsAsync()
         {
-            return Enumerable.Range(1, 5).Select(index => new BettingDay
-            {
-                Date = DateTime.Now.AddDays(index),
-                
-            })
-            .ToArray();
+            var sports = await _context.Sports.Include(s => s.AvailableTips).ToListAsync();
+            
+            return sports;
         }
     }
 }
