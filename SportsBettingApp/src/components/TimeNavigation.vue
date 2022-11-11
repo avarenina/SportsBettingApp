@@ -5,9 +5,7 @@
             <router-link class="day" to="/day/3h">3h</router-link>
             <router-link class="day" to="/day/6h">6h</router-link>
             <router-link class="day" to="/day/12h">12h</router-link>
-            <router-link v-for="(time, index) in times"
-                         :key="index" class="day"
-                         :to="'/day/' + time.queryId">
+            <router-link v-for="time in times" :key="time.id" class="day" :to="'/day/' + time.queryStringId">
                 {{ time.label }}
             </router-link>
             <router-link class="day" to="/day/all">ALL</router-link>

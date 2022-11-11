@@ -15,6 +15,7 @@ builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddTransient<DbInitializer>();
+
 var app = builder.Build();
 
 SeedData(app);

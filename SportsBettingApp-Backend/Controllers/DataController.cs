@@ -21,13 +21,22 @@ namespace SportsBettingApp_Backend.Controllers
         }
 
 
-        [Route("GetSports")]
+        [Route("sports")]
         [HttpGet]
         public async Task<IEnumerable<Sport>> GetSportsAsync()
         {
             var sports = await _context.Sports.Include(s => s.AvailableTips).ToListAsync();
             
             return sports;
+        }
+
+        [Route("betting-days")]
+        [HttpGet]
+        public async Task<IEnumerable<BettingDay>> GetBettingDaysAsync()
+        {
+            var bettingDays = await _context.BettingDays.ToListAsync();
+
+            return bettingDays;
         }
     }
 }
