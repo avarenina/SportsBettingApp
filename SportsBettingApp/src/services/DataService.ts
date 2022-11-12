@@ -9,7 +9,7 @@ class DataService {
         return http.get("/data/betting-days");
     }
     getBettingPairs(): Promise<any> {
-        return http.get("/betting-pairs");
+        return http.get("/data/betting-pairs");
     }
 
 

@@ -18,7 +18,7 @@ namespace SportsBettingApp_Backend.Data
         {
             _dataContext.Database.EnsureCreated();
 
-            
+
             if (!_dataContext.Sports.Any())
             {
                 InsertSports();
@@ -29,7 +29,10 @@ namespace SportsBettingApp_Backend.Data
                 InsertBettingDays();
             }
 
-
+            if (!_dataContext.BettingPairs.Any())
+            {
+                InsertBettingPairs();
+            }
 
 
 
@@ -132,12 +135,12 @@ namespace SportsBettingApp_Backend.Data
             }
             _dataContext.SaveChanges();
         }
-    
+
         public void InsertBettingDays()
         {
             var currentTime = DateTime.Now;
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 7; i++)
             {
 
                 var bettingDay = new BettingDay { Date = currentTime.AddDays(i).Date, Label = currentTime.AddDays(i).Date.ToString("ddd, dd"), QueryStringId = currentTime.AddDays(i).Day.ToString() };
@@ -146,6 +149,73 @@ namespace SportsBettingApp_Backend.Data
 
             _dataContext.SaveChanges();
         }
-    
+
+        public void InsertBettingPairs()
+        {
+            var sportToAdd = _dataContext.Sports.FirstOrDefault(s => s.Name == "Football");
+
+            var bettingPairs = new BettingPair[]
+            {
+                new BettingPair
+                {
+                    FirstOpponent = "Hajduk",
+                    SecondOpponent = "Dinamo",
+                    CategoryId = 0,
+                    MatchStartUTC = DateTime.Now,
+                    Sport = sportToAdd,
+                    Tips = new List<Tip>()
+                    {
+                        new Tip { Name = "1", Stake = 1.5 },
+                        new Tip { Name = "x", Stake = 1.5 },
+                        new Tip { Name = "2", Stake = 1.5 },
+                        new Tip { Name = "1x", Stake = 1.5 },
+                        new Tip { Name = "x2", Stake = 1.5 },
+                        new Tip { Name = "12", Stake = 1.5 }
+                    }
+                },
+                new BettingPair
+                {
+                    FirstOpponent = "Rijeka",
+                    SecondOpponent = "Osjek",
+                    CategoryId = 0,
+                    MatchStartUTC = DateTime.Now.AddDays(1),
+                    Sport = sportToAdd,
+                    Tips = new List<Tip>()
+                    {
+                        new Tip { Name = "1", Stake = 1.5 },
+                        new Tip { Name = "x", Stake = 1.5 },
+                        new Tip { Name = "2", Stake = 1.5 },
+                        new Tip { Name = "1x", Stake = 1.5 },
+                        new Tip { Name = "x2", Stake = 1.5 },
+                        new Tip { Name = "12", Stake = 1.5 }
+                    }
+                },
+                new BettingPair
+                {
+                    FirstOpponent = "Varazdin",
+                    SecondOpponent = "Splir",
+                    CategoryId = 0,
+                    MatchStartUTC = DateTime.Now.AddDays(1),
+                    Sport = sportToAdd,
+                    Tips = new List<Tip>()
+                    {
+                        new Tip { Name = "1", Stake = 1.5 },
+                        new Tip { Name = "x", Stake = 1.5 },
+                        new Tip { Name = "2", Stake = 1.5 },
+                        new Tip { Name = "1x", Stake = 1.5 },
+                        new Tip { Name = "x2", Stake = 1.5 },
+                        new Tip { Name = "12", Stake = 1.5 }
+                    }
+                },
+
+            };
+
+            foreach(var bettingPair in bettingPairs)
+            {
+                _dataContext.BettingPairs.Add(bettingPair);
+            }
+
+            _dataContext.SaveChanges();
+        }
     }
 }

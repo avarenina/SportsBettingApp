@@ -6,9 +6,9 @@
         public string FirstOpponent { get; set; }
         public string SecondOpponent { get; set; }
         public DateTime MatchStartUTC { get; set; }
-        public int SportId { get; set; }
+        public Sport Sport { get; set; }
         public int CategoryId { get; set; }
-        public Tip[] Tips { get; set; }
+        public List<Tip> Tips { get; set; }
     }
 }
 

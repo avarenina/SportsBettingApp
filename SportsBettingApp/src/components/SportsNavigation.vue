@@ -53,10 +53,7 @@ export default defineComponent({
             this.retrieveSportsList();
       
         },
-        setActiveTutorial(sport: Sport, index = -1) {
-          this.currentSport = sport;
-          this.currentIndex = index;
-        },
+        
     },
     watch: {
         '$route'() {

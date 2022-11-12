@@ -49,6 +49,7 @@
     import ResponseData from "@/types/ResponseData";
     import Time from "@/types/Time";
     import router from "@/router";
+    
 
     export default defineComponent({
         name: "time-navigation",
@@ -66,26 +67,46 @@
                 DataService.getTimes()
                     .then((response: ResponseData) => {
                         this.times = response.data;
-                        this.currentTime = this.times[4] as Time;
+                        this.setActiveDay(this.$route.params.day as string);
                         console.log(response.data);
                     })
                     .catch((e: Error) => {
                         console.log(e);
                     });
             },
+            setActiveDay(queryStringId: string) {
+                let activeDay = this.times.find((d: Time) => d.queryStringId == queryStringId);
+                if(!activeDay)
+                {
+                    // Means we have either all, 3hrs, 6hr or 12hrs window
+                    if(queryStringId == 'all' || queryStringId == '3h' || queryStringId == '6h' || queryStringId == '12h' )
+                    {
+                        activeDay = {id: 0, date: '', label: queryStringId, queryStringId: queryStringId} as Time
+                    }
+
+                }
+                this.$store.dispatch('setActiveDay', activeDay);
+            },
         },
         watch: {
             '$route'() {
                 if (!this.$route.params.day) {
                     router.push('/day/all')
-                } 
+                } else {
+                    this.setActiveDay(this.$route.params.day as string);
+                }
             }
         },
         mounted() {
+            this.retrieveTimes();
+
             if (!this.$route.params.day) {
                 router.push('/day/all')
-            }
-            this.retrieveTimes();
+            } 
+
+
+
+            
         },
 
 

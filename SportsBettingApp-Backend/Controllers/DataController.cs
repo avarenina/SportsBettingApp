@@ -38,5 +38,14 @@ namespace SportsBettingApp_Backend.Controllers
 
             return bettingDays;
         }
+
+        [Route("betting-pairs")]
+        [HttpGet]
+        public async Task<IEnumerable<BettingPair>> GetBettinPairsDaysAsync()
+        {
+            var bettingPairs = await _context.BettingPairs.Include(s => s.Sport).Include(s => s.Tips).ToListAsync();
+
+            return bettingPairs;
+        }
     }
 }

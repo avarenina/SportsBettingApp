@@ -1,6 +1,6 @@
 export default interface Time {
     id:number;
-    date: Date;
+    date: string;
     label: string;
     queryStringId: string;
 }

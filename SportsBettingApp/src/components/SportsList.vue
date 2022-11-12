@@ -3,14 +3,15 @@
     <div class="accordion">
         <div v-for="sport in $store.getters.activeSportsList" :key="sport.id" class="accordion-item">
             <h2 class="accordion-header" :id="'sport-category-panel-heading-' + sport.id">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#sport-category-panel-collapse-' + sport.id" aria-expanded="true" :aria-controls="'sport-category-panel-collapse-' + sport.id">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#sport-category-panel-collapse-' + sport.id" 
+                aria-expanded="true" :aria-controls="'sport-category-panel-collapse-' + sport.id">
                     <i :class="sport.icon"></i>&nbsp; {{sport.name}}
                 </button>
             </h2>
             <div :id="'sport-category-panel-collapse-' + sport.id" class="accordion-collapse collapse show" :aria-labelledby="'sport-category-panel-heading-' + sport.id">
                 <div class="accordion-body">
 
-                    <div v-if="bettingPairs.filter(bp => bp.sportId == sport.id).length > 0" class="table-responsive">
+                    <div v-if="filteredBettingPairs.filter(bp => bp.sport.id == sport.id).length > 0" class="table-responsive">
                         <table class="table">
                             <thead>
                                 <tr class="tips">
@@ -19,16 +20,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="pair in bettingPairs.filter(bp => bp.sportId == sport.id)" :key="pair.id">
+                                <tr v-for="pair in filteredBettingPairs.filter(bp => bp.sport.id == sport.id)" :key="pair.id">
                                     <td class="bet-pair" colspan="6">
                                         <span class="competitor">{{pair.firstOpponent}}</span> -
                                         <span class="competitor">{{pair.secondOpponent}}</span>
                                         <span class="pair-time">
-                                            <small>{{pair.matchStartUTC}}</small>
+                                            <small>{{new Date(pair.matchStartUTC).getHours()}}:{{new Date(pair.matchStartUTC).getMinutes()}}</small>
                                         </span>
                                     </td>
                                     <td v-for="tip in sport.availableTips" :key="tip.id" style="padding: 0px !important;" class="bet-quote td-shrink clickable">
-                                        <div style="padding: 0.5rem !important;" @click="toggleSelection(pair, tip.name)" :class="$store.getters.selectedPairsList.some((sp: SelectedPair) => sp.bettingPair.id === pair.id && sp.tip.name === tip) ? 'quote-selected':''">{{pair.tips.filter(t => t.name === tip)[0].stake}}</div>
+                                        <div style="padding: 0.5rem !important;" @click="toggleSelection(pair, tip.name)" 
+                                        :class="$store.getters.selectedPairsList.some((sp: SelectedPair) => sp.bettingPair.id === pair.id && sp.tip.name === tip.name) ? 'quote-selected':''">{{pair.tips.filter(t => t.name === tip.name)[0].stake}}</div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -41,6 +43,8 @@
             </div>
         </div>
     </div>
+    <div>{{$store.getters.activeBettingDay}}</div>
+    <div>{{filteredBettingPairs}}</div>
 </template>
 
 <style>
@@ -127,12 +131,13 @@
     import BettingPair from "@/types/BettingPair";
     import Tip from "@/types/Tip";
     import SelectedPair from "@/types/SelectedPair";
-
+    import Time from "@/types/Time";
 export default defineComponent({
     name: "sports-list",
     data() {
         return {
             bettingPairs: [] as BettingPair[],
+            filteredBettingPairs: [] as BettingPair[],
             selectedPairs: [] as SelectedPair[],
             currentSport: {} as Sport,
             currentIndex: -1,
@@ -144,13 +149,14 @@ export default defineComponent({
             DataService.getBettingPairs()
                 .then((response: ResponseData) => {
                     this.bettingPairs = response.data;
-                    
+                    this.filterBettingPairs();
                 })
                 .catch((e: Error) => {
                     console.log(e);
                 });
         },
         getStakeFromTip(tips: Tip[], tipName: string): number {
+            
             for (let index = 0; index < tips.length; ++index) {
                 if (tips[index].name == tipName) {
                     return tips[index].stake;
@@ -183,10 +189,38 @@ export default defineComponent({
                 this.addPairToList( bettingPair, selectedTip);
             }
         },
+        filterBettingPairs()
+        {
+            let activeDay = this.$store.getters.activeBettingDay as Time;
+            if(activeDay.queryStringId)
+            {
 
+                // we need to handle these cases : 3h, 6h, 12h and all
+                if(activeDay.queryStringId == 'all')
+                {
+                    this.filteredBettingPairs = this.bettingPairs; // filter it so that it only shows future pairs
+                }
+                
+
+
+
+                this.filteredBettingPairs = this.bettingPairs.filter(bp => new Date(bp.matchStartUTC).getDate() == new Date(activeDay.date).getDate() && new Date(bp.matchStartUTC) > new Date());
+            }
+            else{
+                this.filteredBettingPairs = this.bettingPairs;
+            }
+            
+            
+        }
     },
+    watch: {
+            '$route'() {
+                this.filterBettingPairs();
+            }
+        },
     mounted() {
         this.retrieveBettingPairs();
+        
     },
 });
 </script>

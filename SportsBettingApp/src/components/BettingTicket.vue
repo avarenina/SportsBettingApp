@@ -15,7 +15,7 @@
                         <div class="meta panel fluid discrete">
                             <div class="panel-content items-left">
                                 <span class="item">
-                                    <span class="icon ico-clock-outilne"></span> {{pair.bettingPair.matchStartUTC}}
+                                    <span class="icon ico-clock-outilne"></span> {{formatDate(pair.bettingPair.matchStartUTC)}}
                                 </span>
                             </div>
                             <div class="items-right">
@@ -412,7 +412,16 @@
             showNotification(message: string) {
             
                 this.$store.dispatch('showGlobalNotification', { id: 0, type: 'success', message: message, duration: 4000 });
+            },
+            formatDate(date: string)
+            {
+                const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+                const d = new Date(date);
+
+                return days[d.getDay()] + ', ' + d.getHours() + ':' + d.getMinutes();
             }
+
 
     }
   });

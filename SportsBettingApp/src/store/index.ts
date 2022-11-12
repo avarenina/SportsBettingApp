@@ -8,6 +8,7 @@ import BettingPair from "@/types/BettingPair";
 import Tip from "@/types/Tip";
 import SelectedPair from "@/types/SelectedPair";
 import Notification from "@/types/Notification";
+import Time from '@/types/Time';
 
 
 export default createStore({
@@ -16,12 +17,9 @@ export default createStore({
         activeSportsList: [] as Sport[],
         selectedPairsList: [] as SelectedPair[],
 
+        activeBettingDay: {} as Time,
         globalNotifictationList: [] as Notification[],
         globalNotificationsIndex: 0,
-
-        firstName: 'John',
-        lastName: 'Doe',
-        favorites: [] // will store favorites here
     },
     mutations: {
         UPDATE_SELECTED_PAIRS(state, payload) {
@@ -33,6 +31,9 @@ export default createStore({
         },
         UPDATE_ACTIVE_SPORTS(state, payload) {
             state.activeSportsList = payload
+        },
+        UPDATE_ACTIVE_BETTING_DAY(state, payload) {
+            state.activeBettingDay = payload
         },
         UPDATE_GLOBAL_NOTIFICATIONS(state, payload) {
             state.globalNotifictationList = payload
@@ -70,7 +71,10 @@ export default createStore({
             }, payload.duration);
 
         },
-        
+        setActiveDay(context, activeDay: Time)
+        {
+            context.commit('UPDATE_ACTIVE_BETTING_DAY', activeDay)
+        }
     },
     getters: {
        
@@ -86,6 +90,8 @@ export default createStore({
         globalNotificationList: function (state): Notification[] {
             return state.globalNotifictationList;
         },
-
+        activeBettingDay: function (state): Time {
+            return state.activeBettingDay;
+        }
     }
 })
