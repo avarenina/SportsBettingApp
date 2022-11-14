@@ -2,8 +2,8 @@
     
     <div v-if="$store.getters.selectedPairsList.length != 0" class="card card-body ticket-preview">
         <div>
-            <ul class="list-group ticket-items">
-                <li v-for="pair in $store.getters.selectedPairsList" :key="pair.bettingPair.id" class="list-group-item ticket-item">
+                <transition-group name="list" tag="ul" class="list-group ticket-items">
+                    <li v-for="pair in $store.getters.selectedPairsList" :key="pair.bettingPair.id" class="list-group-item ticket-item">
                     
                     <div class="item-content">
                         <div class="pair-title">
@@ -27,7 +27,8 @@
                     </div>
 
                 </li>
-            </ul>
+                </transition-group>   
+                
         </div>
         <div class="ticket-summary">
             <div class="band quote-info">
@@ -134,7 +135,19 @@
         border-left: 0px !important;
         border-right: 0px !important;
         display: flex !important;
+        
     }
+
+    .list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
 
     .ticket-item:hover {
         background-color: var(--bs-list-group-action-hover-bg);

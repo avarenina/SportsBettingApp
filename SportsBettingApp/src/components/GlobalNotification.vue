@@ -13,11 +13,7 @@
 
 </template>
 <style>
-    .overlay {
-       
-    }
-
-   
+    
     .toasts-item {
         transition: all 0.5s;
     }

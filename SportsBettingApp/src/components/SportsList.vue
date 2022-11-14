@@ -25,7 +25,7 @@
                                         <span class="competitor">{{pair.firstOpponent}}</span> -
                                         <span class="competitor">{{pair.secondOpponent}}</span>
                                         <span class="pair-time">
-                                            <small>{{new Date(pair.matchStartUTC).getHours()}}:{{new Date(pair.matchStartUTC).getMinutes()}}</small>
+                                            <small>{{formatDate(pair.matchStartUTC)}}</small>
                                         </span>
                                     </td>
                                     <td v-for="tip in sport.availableTips" :key="tip.id" style="padding: 0px !important;" class="bet-quote td-shrink clickable">
@@ -153,6 +153,7 @@ export default defineComponent({
                 })
                 .catch((e: Error) => {
                     console.log(e);
+                    this.$store.dispatch('showGlobalNotification', { id: 0, type: 'error', message: e, duration: 4000 });
                 });
         },
         getStakeFromTip(tips: Tip[], tipName: string): number {
@@ -192,26 +193,49 @@ export default defineComponent({
         filterBettingPairs()
         {
             let activeDay = this.$store.getters.activeBettingDay as Time;
+
+            this.bettingPairs = this.bettingPairs.filter(bp => new Date(bp.matchStartUTC) > new Date()); // Discard those that have already started 
+
             if(activeDay.queryStringId)
             {
-
+                const currentTime = new Date();
                 // we need to handle these cases : 3h, 6h, 12h and all
                 if(activeDay.queryStringId == 'all')
                 {
-                    this.filteredBettingPairs = this.bettingPairs; // filter it so that it only shows future pairs
+                    this.filteredBettingPairs = this.bettingPairs; 
                 }
-                
-
-
-
-                this.filteredBettingPairs = this.bettingPairs.filter(bp => new Date(bp.matchStartUTC).getDate() == new Date(activeDay.date).getDate() && new Date(bp.matchStartUTC) > new Date());
+                else if(activeDay.queryStringId == '3h')
+                {
+                    this.filteredBettingPairs = this.bettingPairs.filter(bp => new Date(bp.matchStartUTC) < new Date(currentTime.getTime() + (3*60*60*1000)));
+                }
+                else if(activeDay.queryStringId == '6h')
+                {
+                    this.filteredBettingPairs = this.bettingPairs.filter(bp => new Date(bp.matchStartUTC) < new Date(currentTime.getTime() + (6*60*60*1000)));
+                }
+                else if(activeDay.queryStringId == '12h')
+                {
+                    this.filteredBettingPairs = this.bettingPairs.filter(bp => new Date(bp.matchStartUTC) < new Date(currentTime.getTime() + (12*60*60*1000)));
+                }
+                else
+                {
+                    this.filteredBettingPairs = this.bettingPairs.filter(bp => new Date(bp.matchStartUTC).getDate() == new Date(activeDay.date).getDate());
+                }
             }
             else{
                 this.filteredBettingPairs = this.bettingPairs;
             }
             
             
+        },
+        formatDate(date: string)
+        {
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            const d = new Date(date);
+
+            return days[d.getDay()] + ', ' + d.getHours() + ':' + d.getMinutes();
         }
+
     },
     watch: {
             '$route'() {

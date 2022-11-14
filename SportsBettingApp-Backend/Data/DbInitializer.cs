@@ -161,7 +161,7 @@ namespace SportsBettingApp_Backend.Data
                     FirstOpponent = "Hajduk",
                     SecondOpponent = "Dinamo",
                     CategoryId = 0,
-                    MatchStartUTC = DateTime.Now,
+                    MatchStartUTC = DateTime.Now.AddMinutes(30),
                     Sport = sportToAdd,
                     Tips = new List<Tip>()
                     {
