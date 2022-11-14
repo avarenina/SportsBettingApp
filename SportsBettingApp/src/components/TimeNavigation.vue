@@ -5,8 +5,8 @@
             <router-link class="day" to="/day/3h">3h</router-link>
             <router-link class="day" to="/day/6h">6h</router-link>
             <router-link class="day" to="/day/12h">12h</router-link>
-            <router-link v-for="time in times" :key="time.id" class="day" :to="'/day/' + time.queryStringId">
-                {{ time.label }}
+            <router-link v-for="bettingDay in bettingDays" :key="bettingDay.id" class="day" :to="'/day/' + bettingDay.queryStringId">
+                {{ bettingDay.label }}
             </router-link>
             <router-link class="day" to="/day/all">ALL</router-link>
         </div>
@@ -47,7 +47,7 @@
 
     import DataService from "@/services/DataService";
     import ResponseData from "@/types/ResponseData";
-    import Time from "@/types/Time";
+    import BettingDay from "@/types/BettingDay";
     import router from "@/router";
     
 
@@ -58,15 +58,15 @@
         },
         data() {
             return {
-                times: [] as Time[],
-                currentTime: {} as Time
+                bettingDays: [] as BettingDay[],
+                currentBettingDay: {} as BettingDay
             };
         },
         methods: {
             retrieveTimes() {
                 DataService.getTimes()
                     .then((response: ResponseData) => {
-                        this.times = response.data;
+                        this.bettingDays = response.data;
                         this.setActiveDay(this.$route.params.day as string);
                         console.log(response.data);
                     })
@@ -75,13 +75,13 @@
                     });
             },
             setActiveDay(queryStringId: string) {
-                let activeDay = this.times.find((d: Time) => d.queryStringId == queryStringId);
+                let activeDay = this.bettingDays.find((d: BettingDay) => d.queryStringId == queryStringId);
                 if(!activeDay)
                 {
                     // Means we have either all, 3hrs, 6hr or 12hrs window
                     if(queryStringId == 'all' || queryStringId == '3h' || queryStringId == '6h' || queryStringId == '12h' )
                     {
-                        activeDay = {id: 0, date: '', label: queryStringId, queryStringId: queryStringId} as Time
+                        activeDay = {id: 0, date: '', label: queryStringId, queryStringId: queryStringId} as BettingDay
                     }
 
                 }

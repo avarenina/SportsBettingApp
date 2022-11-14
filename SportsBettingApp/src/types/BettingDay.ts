@@ -1,4 +1,4 @@
-export default interface Time {
+export default interface BettingDay {
     id:number;
     date: string;
     label: string;
