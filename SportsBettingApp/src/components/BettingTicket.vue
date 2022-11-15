@@ -94,7 +94,7 @@
         <button
           class="btn btn-primary btn-bet"
           :disabled="betErrorMessage != ''"
-          @click="showNotification('test')"
+          @click="placeBet()"
           type="button"
         >
           Place Bet
@@ -301,6 +301,8 @@ input {
 import { defineComponent } from "vue";
 import BettingPair from "@/types/BettingPair";
 import SelectedPair from "@/types/SelectedPair";
+import BettingTicket from "@/types/BettingTicket";
+import BettingService from "@/services/BettingService";
 
 export default defineComponent({
   name: "betting-ticket",
@@ -441,6 +443,18 @@ export default defineComponent({
 
       return days[d.getDay()] + ", " + d.getHours() + ":" + d.getMinutes();
     },
+    placeBet() {
+
+       let bettingTicket: BettingTicket = {
+        ticketPairs: this.$store.state.selectedPairsList as SelectedPair [],
+        betAmount: this.betAmount
+       }
+
+       
+      BettingService.placeBet(bettingTicket)
+        
+    }
+
   },
 });
 </script>

@@ -1,9 +1,9 @@
+using Application.Common.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using SportsBettingApp_Backend.Models;
-using SportsBettingApp_Backend.Data;
 using Microsoft.EntityFrameworkCore;
+using Domain.Models;
 
-namespace SportsBettingApp_Backend.Controllers
+namespace WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -11,10 +11,10 @@ namespace SportsBettingApp_Backend.Controllers
     {
 
 
-        private readonly DataContext _context;
+        private readonly IApplicationDBContext _context;
         private readonly ILogger<DataController> _logger;
 
-        public DataController(ILogger<DataController> logger, DataContext context)
+        public DataController(ILogger<DataController> logger, IApplicationDBContext context)
         {
             _logger = logger;
             _context = context;

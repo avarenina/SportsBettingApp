@@ -1,44 +1,45 @@
-﻿using SportsBettingApp_Backend.Models;
+﻿using Application.Common.Interfaces;
+using Domain.Models;
 using System;
 using System.Diagnostics;
 using System.Linq;
-namespace SportsBettingApp_Backend.Data
+
+namespace Infrastructure.Data
 {
     public class DbInitializer
     {
 
-        private readonly DataContext _dataContext;
+        private readonly IApplicationDBContext _dataContext;
 
-        public DbInitializer(DataContext dataContext)
+        public DbInitializer(IApplicationDBContext dataContext)
         {
             _dataContext = dataContext;
         }
 
-        public void Initialize()
+        public async Task InitializeAsync()
         {
-            _dataContext.Database.EnsureCreated();
-
+           
 
             if (!_dataContext.Sports.Any())
             {
-                InsertSports();
+                await InsertSportsAsync();
             }
 
             if (!_dataContext.BettingDays.Any())
             {
-                InsertBettingDays();
+                await InsertBettingDaysAsync();
             }
 
             if (!_dataContext.BettingPairs.Any())
             {
-                InsertBettingPairs();
+                await InsertBettingPairsAsync();
             }
 
 
 
         }
 
-        public void InsertSports()
+        public async Task InsertSportsAsync()
         {
             var sports = new Sport[]
             {
@@ -133,10 +134,10 @@ namespace SportsBettingApp_Backend.Data
             {
                 _dataContext.Sports.Add(s);
             }
-            _dataContext.SaveChanges();
+           await _dataContext.SaveChangesAsync();
         }
 
-        public void InsertBettingDays()
+        public async Task InsertBettingDaysAsync()
         {
             var currentTime = DateTime.Now;
 
@@ -147,10 +148,10 @@ namespace SportsBettingApp_Backend.Data
                 _dataContext.BettingDays.Add(bettingDay);
             }
 
-            _dataContext.SaveChanges();
+            await _dataContext.SaveChangesAsync();
         }
 
-        public void InsertBettingPairs()
+        public async Task InsertBettingPairsAsync()
         {
             var sportToAdd = _dataContext.Sports.FirstOrDefault(s => s.Name == "Football");
 
@@ -215,7 +216,7 @@ namespace SportsBettingApp_Backend.Data
                 _dataContext.BettingPairs.Add(bettingPair);
             }
 
-            _dataContext.SaveChanges();
+            await _dataContext.SaveChangesAsync();
         }
     }
 }

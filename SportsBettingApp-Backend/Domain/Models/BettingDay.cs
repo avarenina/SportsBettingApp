@@ -1,9 +1,8 @@
-namespace SportsBettingApp_Backend.Models
+global using Domain.Common;
+namespace Domain.Models
 {
-    public class BettingDay
+    public class BettingDay : BaseEntity
     {
-        public int ID { get; set; }
-
         public DateTime Date { get; set; }
 
         public string Label { get; set; }

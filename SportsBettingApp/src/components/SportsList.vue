@@ -54,6 +54,7 @@
             </div>
         </div>
     </div>
+    <div>{{ bettingPairs }}</div>
     <div>{{ $store.getters.activeBettingDay }}</div>
     <div>{{ filteredBettingPairs }}</div>
 </template>
@@ -158,6 +159,7 @@ export default defineComponent({
             DataService.getBettingPairs()
                 .then((response: ResponseData) => {
                     this.bettingPairs = response.data;
+                    console.log(response.data)
                     this.filterBettingPairs();
                 })
                 .catch((e: Error) => {

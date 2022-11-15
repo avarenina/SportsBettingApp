@@ -60,6 +60,7 @@ export default defineComponent({
             if (this.$route.params.id) {
                 this.setActiveSport(this.$route.params.id as string)
             } else {
+                this.setActiveSport('0') // reset the sport
                 this.refreshList()
             }
             console.log(this.$route.params.id);

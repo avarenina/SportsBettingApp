@@ -23,3 +23,15 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
+/Application/bin/Debug/net6.0
+/Application/obj
+/Domain/bin/Debug/net6.0
+/Domain/obj
+/Infrastructure/bin/Debug/net6.0
+/Infrastructure/obj
+/SportsBettingApp-Backend/Application/bin/Debug/net6.0
+/SportsBettingApp-Backend/Application/obj
+/SportsBettingApp-Backend/Domain/bin/Debug/net6.0
+/SportsBettingApp-Backend/Domain/obj
+/SportsBettingApp-Backend/Infrastructure/bin/Debug/net6.0
+/SportsBettingApp-Backend/Infrastructure/obj
