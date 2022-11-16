@@ -1,36 +1,38 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Models;
-using System;
-using System.Diagnostics;
-using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Data
 {
     public class DbInitializer
     {
+        private readonly ILogger<DbInitializer> _logger;
+        private readonly IRepository<Sport> _repositorySports;
+        private readonly IRepository<BettingDay> _repositoryBettingDays;
+        private readonly IRepository<BettingPair> _repositoryBettingPairs;
 
-        private readonly IApplicationDBContext _dataContext;
-
-        public DbInitializer(IApplicationDBContext dataContext)
+        public DbInitializer(ILogger<DbInitializer> logger, IRepository<BettingDay> repositoryBettingDays, IRepository<Sport> repositorySports, IRepository<BettingPair> repositoryBettingPairs)
         {
-            _dataContext = dataContext;
+            _logger = logger;
+            _repositorySports = repositorySports;
+            _repositoryBettingDays = repositoryBettingDays;
+            _repositoryBettingPairs = repositoryBettingPairs;
         }
 
         public async Task InitializeAsync()
         {
-           
 
-            if (!_dataContext.Sports.Any())
+            if (!_repositorySports.Table.Any())
             {
                 await InsertSportsAsync();
             }
 
-            if (!_dataContext.BettingDays.Any())
+            if (!_repositoryBettingDays.Table.Any())
             {
                 await InsertBettingDaysAsync();
             }
 
-            if (!_dataContext.BettingPairs.Any())
+            if (!_repositoryBettingPairs.Table.Any())
             {
                 await InsertBettingPairsAsync();
             }
@@ -130,11 +132,9 @@ namespace Infrastructure.Data
                     }
                 }
             };
-            foreach (Sport s in sports)
-            {
-                _dataContext.Sports.Add(s);
-            }
-           await _dataContext.SaveChangesAsync();
+
+            _repositorySports.Insert(sports);
+
         }
 
         public async Task InsertBettingDaysAsync()
@@ -145,15 +145,15 @@ namespace Infrastructure.Data
             {
 
                 var bettingDay = new BettingDay { Date = currentTime.AddDays(i).Date, Label = currentTime.AddDays(i).Date.ToString("ddd, dd"), QueryStringId = currentTime.AddDays(i).Day.ToString() };
-                _dataContext.BettingDays.Add(bettingDay);
+               _repositoryBettingDays.Insert(bettingDay);
             }
 
-            await _dataContext.SaveChangesAsync();
+            
         }
 
         public async Task InsertBettingPairsAsync()
         {
-            var sportToAdd = _dataContext.Sports.FirstOrDefault(s => s.Name == "Football");
+            var sportToAdd = _repositorySports.Table.FirstOrDefault(s => s.Name == "Football");
 
             var bettingPairs = new BettingPair[]
             {
@@ -211,12 +211,7 @@ namespace Infrastructure.Data
 
             };
 
-            foreach(var bettingPair in bettingPairs)
-            {
-                _dataContext.BettingPairs.Add(bettingPair);
-            }
-
-            await _dataContext.SaveChangesAsync();
+            _repositoryBettingPairs.Insert(bettingPairs);   
         }
     }
 }

@@ -4,18 +4,40 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Common.Interfaces
 {
-    public interface IApplicationDBContext
-    {
-        public DbSet<Sport> Sports { get; set; }
-        public DbSet<BettingPair> BettingPairs { get; set; }
-        public DbSet<BettingDay> BettingDays { get; set; }
-        public DbSet<Tip> Tips { get; set; }
-        public DbSet<BettingTicket> BettingTickets { get; set; }
-        public DbSet<TicketPair> TicketPairs { get; set; }
+    public interface IApplicationDBContext 
+    { 
+        
 
+        #region Methods
 
-        Task<int> SaveChangesAsync();
+        /// <summary>
+        /// Creates a DbSet that can be used to query and save instances of entity
+        /// </summary>
+        /// <typeparam name="TEntity">Entity type</typeparam>
+        /// <returns>A set for the given entity type</returns>
+        DbSet<TEntity> Set<TEntity>() where TEntity : BaseEntity;
+
        
+        /// <summary>
+        /// Saves all changes made in this context to the database
+        /// </summary>
+        /// <returns>The number of state entries written to the database</returns>
+        int SaveChanges();
 
+        /// <summary>
+        /// Generate a script to create all tables for the current model
+        /// </summary>
+        /// <returns>A SQL script</returns>
+        string GenerateCreateScript();
+
+        
+
+        /// <summary>
+        /// Detach an entity from the context
+        /// </summary>
+        /// <typeparam name="TEntity">Entity type</typeparam>
+        /// <param name="entity">Entity</param>
+        void Detach<TEntity>(TEntity entity) where TEntity : BaseEntity;
+        #endregion
     }
 }

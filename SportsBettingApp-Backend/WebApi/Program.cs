@@ -1,7 +1,12 @@
 
-using System.Text.Json.Serialization;
+using Application.Common.Interfaces;
+using Application.Services;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Infrastructure;
 using Infrastructure.Data;
+using Nop.Data;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,10 +24,18 @@ builder.Services
     .AddJsonOptions(o => o.JsonSerializerOptions.PropertyNameCaseInsensitive = true)
     .AddJsonOptions(o => o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
 
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+    .ConfigureContainer<ContainerBuilder>(builder =>
+    {
+        
+        //repositories
+        builder.RegisterGeneric(typeof(EfRepository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
+    });
+
+builder.Services.AddScoped<DataService>();
+builder.Services.AddScoped<BettingService>();
 
 builder.Services.AddTransient<DbInitializer>();
-
-
 var app = builder.Build();
 
 await SeedDataAsync(app);

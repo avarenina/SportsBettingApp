@@ -17,10 +17,9 @@ pnpm-debug.log*
 .idea
 .vscode
 .vs
-*.suo
 *.ntvs*
 *.njsproj
-*.sln
+
 *.sw?
 
 /Application/bin/Debug/net6.0

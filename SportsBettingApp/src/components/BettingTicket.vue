@@ -1,25 +1,16 @@
 <template>
-  <div
-    v-if="$store.getters.selectedPairsList.length != 0"
-    class="card card-body ticket-preview"
-  >
+  <div v-if="$store.getters.selectedPairsList.length != 0" class="card card-body ticket-preview">
     <div>
       <transition-group name="list" tag="ul" class="list-group ticket-items">
-        <li
-          v-for="pair in $store.getters.selectedPairsList"
-          :key="pair.bettingPair.id"
-          class="list-group-item ticket-item"
-        >
+        <li v-for="pair in $store.getters.selectedPairsList" :key="pair.bettingPair.id"
+          class="list-group-item ticket-item">
           <div class="item-content">
             <div class="pair-title">
               <div class="pair-name">
                 {{ pair.bettingPair.firstOpponent }} -
                 {{ pair.bettingPair.secondOpponent }}
               </div>
-              <span
-                @click="removePairFromList(pair.bettingPair)"
-                class="pair-remove"
-              >
+              <span @click="removePairFromList(pair.bettingPair)" class="pair-remove">
                 <i class="fa-solid fa-xmark"></i>
               </span>
             </div>
@@ -53,20 +44,14 @@
       <div class="band bet-amount">
         <div class="input-wrp">
           <div class="input-label">Bet Amount €</div>
-          <input
-            type="text"
-            maxlength="10"
-            v-model="displayBetAmount"
-            @blur="isInputActive = false"
-            @focus="isInputActive = true"
-          />
+          <input type="text" maxlength="10" v-model="displayBetAmount" @blur="isInputActive = false"
+            @focus="isInputActive = true" />
           <div v-if="betErrorMessage != ''" class="arrow_box">
             {{ betErrorMessage }}
           </div>
         </div>
         <div class="mt">
-          <span>-{{ formatPrice(manipulationCost) }} € (5% mt) = </span
-          ><span>{{ betAmountFinal.toFixed(2) }} €</span>
+          <span>-{{ formatPrice(manipulationCost) }} € (5% mt) = </span><span>{{ betAmountFinal.toFixed(2) }} €</span>
         </div>
       </div>
       <div class="band amounts">
@@ -91,12 +76,7 @@
 
     <div class="betting-controls">
       <div class="d-grid gap-2">
-        <button
-          class="btn btn-primary btn-bet"
-          :disabled="betErrorMessage != ''"
-          @click="placeBet()"
-          type="button"
-        >
+        <button class="btn btn-primary btn-bet" :disabled="betErrorMessage != ''" @click="placeBet()" type="button">
           Place Bet
         </button>
       </div>
@@ -113,6 +93,7 @@
   float: right;
   cursor: pointer;
 }
+
 .pair-remove:hover {
   color: red;
 }
@@ -168,6 +149,7 @@
 .list-leave-active {
   transition: all 0.5s ease;
 }
+
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
@@ -181,17 +163,21 @@
 .ticket-item:hover .pair-remove {
   display: inline;
 }
+
 .ticket-preview {
   padding: 0px !important;
 }
+
 .ticket-item:last-child {
   border-bottom-left-radius: 0px !important;
   border-bottom-right-radius: 0px !important;
 }
+
 .btn-bet {
   border-top-left-radius: 0px !important;
   border-top-right-radius: 0px !important;
 }
+
 .ticket-summary {
   background-color: #e7f1ff;
   padding: 5px;
@@ -235,14 +221,17 @@ input {
   table-layout: fixed;
   width: 100%;
 }
+
 .panel-content {
   display: table-cell;
   vertical-align: top;
   text-align: left;
 }
+
 .panel .right {
   text-align: right;
 }
+
 .input-wrp {
   position: relative;
 }
@@ -250,17 +239,20 @@ input {
 .amounts {
   line-height: 22px;
 }
+
 .amounts {
   font-size: 13px;
   font-weight: 600;
   padding-left: 5px;
 }
+
 .select {
   width: 20px;
   align-items: center;
   display: flex;
   justify-content: center;
 }
+
 .item-content {
   font-size: 12px;
   flex-grow: 1;
@@ -273,12 +265,15 @@ input {
   color: #636f78;
   margin-top: 3px;
 }
+
 .items-left {
   text-align: left;
 }
+
 .items-left .item {
   margin-right: 5px;
 }
+
 .meta .tip {
   display: inline-block;
   padding: 0 5px;
@@ -289,6 +284,7 @@ input {
   border-radius: 3px;
   background-color: rgba(255, 255, 255, 0.6);
 }
+
 .item-distant {
   margin-left: 10px;
 }
@@ -445,14 +441,14 @@ export default defineComponent({
     },
     placeBet() {
 
-       let bettingTicket: BettingTicket = {
-        ticketPairs: this.$store.state.selectedPairsList as SelectedPair [],
+      let bettingTicket: BettingTicket = {
+        ticketPairs: this.$store.state.selectedPairsList as SelectedPair[],
         betAmount: this.betAmount
-       }
+      }
 
-       
+
       BettingService.placeBet(bettingTicket)
-        
+
     }
 
   },
