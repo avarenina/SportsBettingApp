@@ -7,6 +7,7 @@ export default interface BettingTicket {
     betAmountFinal: number;
     ticketPlacedTime?: string;
     isWinningTicket?: boolean;
+    isCompleted?:boolean;
     winAmount: number;
     totalStake:number;
     taxAmount:number;

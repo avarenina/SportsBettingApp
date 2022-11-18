@@ -450,13 +450,10 @@ export default defineComponent({
       return days[d.getDay()] + ", " + d.getHours() + ":" + d.getMinutes();
     },
     placeBet() {
-
-      
-
       BettingService.placeBet(this.bettingTicket).then((response) => {
           // We have succesifully placed a ticket
           // Push ticket to the list
-          
+          this.resetBettingTicket();
           this.$store.dispatch("addBettingTicketList", response.data);
           this.$store.dispatch("clearSelectedPairList");
           this.showNotification('Betting ticket submitted with success!')
@@ -470,8 +467,20 @@ export default defineComponent({
             this.showNotification("Error placing the bet! Please try again!", 'danger')
           }
         });
+    },
+    resetBettingTicket() {
+      this.bettingTicket = {
+            ticketPairs: this.$store.state.selectedPairsList as SelectedPair[],
+            totalStake:0,
+            betAmount:5,
+            manipulationCost: 0,
+            betAmountFinal: 0,
+            payoutAmount: 0,
+            winAmount: 0,
+            taxAmount: 0,
+            isWinningTicket: false
+          } as BettingTicket;
     }
-
   },
 });
 </script>

@@ -12,10 +12,24 @@ namespace Domain.Models
         [JsonPropertyName("betAmount")]
         public double BetAmount { get; set; }
 
+        public double BetAmountFinal { get; set; }
+
         [JsonPropertyName("ticketPlacedTime")]
         public DateTime TicketPlacedTime { get; set; }
 
         [JsonPropertyName("isWinningTicket")]
         public bool IsWinningTicket { get; set; }
+
+        public bool IsCompleted { get; set; }
+
+        public double WinAmount { get; set; }
+
+        public double TotalStake { get; set; }
+
+        public double TaxAmount { get; set; }
+
+        public double PayoutAmount { get; set; }
+
+        public double ManipulationCost { get; set; }
     }
 }

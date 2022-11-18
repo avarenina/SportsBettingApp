@@ -39,6 +39,9 @@ namespace WebApi.Controllers
             {
                 var bettingTicket = _bettingService.ValidateAndConstructBettingTicket(bettingTickeDTO);
 
+                // next calculate/verify all properties of the ticket
+
+
 
 
                 _bettingService.InsertBettingTicket(bettingTicket);
@@ -61,16 +64,18 @@ namespace WebApi.Controllers
             return Json(_bettingService.GetAllBettingTickets().OrderByDescending(bp => bp.Id));
         }
 
+
+        
     }
 
 
 
-   
-
-    
 
 
-    
+
+
+
+
 
 
 
