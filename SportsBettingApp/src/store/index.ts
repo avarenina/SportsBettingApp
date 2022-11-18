@@ -5,17 +5,18 @@ import ResponseData from "@/types/ResponseData";
 import BettingPair from "@/types/BettingPair";
 import Tip from "@/types/Tip";
 import SelectedPair from "@/types/SelectedPair";
-import Notification from "@/types/Notification";
+import GlobalNotification from "@/types/GlobalNotification";
 import BettingDay from "@/types/BettingDay";
-
+import BettingTicket from "@/types/BettingTicket";
 export default createStore({
   state: {
     sportsList: [] as Sport[],
     activeSportsList: [] as Sport[],
     selectedPairsList: [] as SelectedPair[],
-
+    bettingTicketsList: [] as BettingTicket[],
+    administrationTab: 'tickets',
     activeBettingDay: {} as BettingDay,
-    globalNotifictationList: [] as Notification[],
+    globalNotifictationList: [] as GlobalNotification[],
     globalNotificationsIndex: 0,
   },
   mutations: {
@@ -34,6 +35,12 @@ export default createStore({
     },
     UPDATE_GLOBAL_NOTIFICATIONS(state, payload) {
       state.globalNotifictationList = payload;
+    },
+    UPDATE_ADMINISTRATION_TAB(state, payload) {
+      state.administrationTab = payload;
+    },
+    UPDATE_BETTING_TICKETS(state, payload) {
+      state.bettingTicketsList = payload;
     },
   },
   actions: {
@@ -58,6 +65,11 @@ export default createStore({
       );
       context.commit("UPDATE_SELECTED_PAIRS", selectedPairsList);
     },
+    clearSelectedPairList(context) {
+      const selectedPairsList = [] as SelectedPair[];
+      context.commit("UPDATE_SELECTED_PAIRS", selectedPairsList);
+    },
+
     showGlobalNotification(context, payload) {
       payload.id = context.state.globalNotificationsIndex++;
 
@@ -75,6 +87,18 @@ export default createStore({
     setActiveDay(context, activeDay: BettingDay) {
       context.commit("UPDATE_ACTIVE_BETTING_DAY", activeDay);
     },
+    setAdministrationTab(context, activeTab: string) {
+      context.commit("UPDATE_ADMINISTRATION_TAB", activeTab);
+    },
+    updateBettingTicketsList(context, newBettingTicketsList: BettingTicket[]): void {
+      const bettingTicketsList = newBettingTicketsList;
+      context.commit("UPDATE_BETTING_TICKETS", bettingTicketsList);
+    },
+    addBettingTicketList(context, newBettingTicket: BettingTicket): void {
+      const bettingTicketsList = context.state.bettingTicketsList;
+      bettingTicketsList.unshift(newBettingTicket);
+      context.commit("UPDATE_BETTING_TICKETS", bettingTicketsList);
+    },
   },
   getters: {
     selectedPairsList: function (state): SelectedPair[] {
@@ -86,11 +110,18 @@ export default createStore({
     activeSportsList: function (state): Sport[] {
       return state.activeSportsList;
     },
-    globalNotificationList: function (state): Notification[] {
+    globalNotificationList: function (state): GlobalNotification[] {
       return state.globalNotifictationList;
     },
     activeBettingDay: function (state): BettingDay {
       return state.activeBettingDay;
     },
+    activeAdministrationTab: function (state): string {
+      return state.administrationTab;
+    },
+    bettingTicketsList: function (state): BettingTicket[] {
+      return state.bettingTicketsList;
+    },
+
   },
 });

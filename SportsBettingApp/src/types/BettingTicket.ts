@@ -4,6 +4,12 @@ export default interface BettingTicket {
     id?: number
     ticketPairs: SelectedPair [];
     betAmount: number;
+    betAmountFinal: number;
     ticketPlacedTime?: string;
     isWinningTicket?: boolean;
+    winAmount: number;
+    totalStake:number;
+    taxAmount:number;
+    payoutAmount: number;
+    manipulationCost: number;
 }

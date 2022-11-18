@@ -36,11 +36,12 @@
                                     </td>
                                     <td v-for="tip in sport.availableTips" :key="tip.id" style="padding: 0px !important"
                                         class="bet-quote td-shrink clickable">
-                                        <div style="padding: 0.5rem !important" @click="toggleSelection(pair, tip.name)"
+                                        <div v-if="pair.tips.some((t) => t.name == tip.name)" style="padding: 0.5rem !important" @click="toggleSelection(pair, tip.name)"
                                             :class="$store.getters.selectedPairsList.some((sp: SelectedPair) => sp.bettingPair.id === pair.id && sp.tip.name === tip.name) ? 'quote-selected' : ''">
-                                            {{
-                                                    pair.tips.filter((t) => t.name === tip.name)[0].stake
-                                            }}
+                                            {{pair.tips.filter((t) => t.name === tip.name)[0].stake}}
+                                        </div>
+                                        <div v-else style="padding: 0.5rem !important">
+                                            -
                                         </div>
                                     </td>
                                 </tr>
@@ -54,9 +55,7 @@
             </div>
         </div>
     </div>
-    <div>{{ bettingPairs }}</div>
-    <div>{{ $store.getters.activeBettingDay }}</div>
-    <div>{{ filteredBettingPairs }}</div>
+    
 </template>
 
 <style>
@@ -257,8 +256,20 @@ export default defineComponent({
             const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
             const d = new Date(date);
+            let hours = d.getHours().toString();
+            let minutes = d.getMinutes().toString();
+            // prepend zero
+            if(!hours.startsWith('0') && hours.length == 1)
+            {
+                hours = '0' + hours;
+            }
 
-            return days[d.getDay()] + ", " + d.getHours() + ":" + d.getMinutes();
+            if(!minutes.startsWith('0') && minutes.length == 1)
+            {
+                minutes = '0' + minutes;
+            }
+
+            return days[d.getDay()] + ", " + hours + ":" + minutes;
         },
     },
     watch: {

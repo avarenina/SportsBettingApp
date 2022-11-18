@@ -37,7 +37,7 @@
             {{ $store.getters.selectedPairsList.length }} pairs
           </div>
           <div class="panel-content right">
-            Total Stake: {{ Number(totalStake.toFixed(3)) }}
+            Total Stake: {{ Number(bettingTicket.totalStake.toFixed(3)) }}
           </div>
         </div>
       </div>
@@ -51,25 +51,25 @@
           </div>
         </div>
         <div class="mt">
-          <span>-{{ formatPrice(manipulationCost) }} € (5% mt) = </span><span>{{ betAmountFinal.toFixed(2) }} €</span>
+          <span>-{{ formatPrice(bettingTicket.manipulationCost) }} € (5% mt) = </span><span>{{ bettingTicket.betAmountFinal.toFixed(2) }} €</span>
         </div>
       </div>
       <div class="band amounts">
         <div class="panel payout">
           <div class="panel-content title">Payout:</div>
           <div class="panel-content right">
-            {{ formatPrice(payoutAmount) }} €
+            {{ formatPrice(bettingTicket.payoutAmount) }} €
           </div>
         </div>
         <div class="panel win">
           <div class="panel-content title">Win:</div>
-          <div class="panel-content right">{{ formatPrice(winAmount) }} €</div>
+          <div class="panel-content right">{{ formatPrice(bettingTicket.winAmount) }} €</div>
         </div>
         <div class="panel tax">
           <div class="panel-content">
             <span class="tax">Tax:</span>
           </div>
-          <div class="panel-content right">{{ formatPrice(taxAmount) }} €</div>
+          <div class="panel-content right">{{ formatPrice(bettingTicket.taxAmount) }} €</div>
         </div>
       </div>
     </div>
@@ -299,19 +299,27 @@ import BettingPair from "@/types/BettingPair";
 import SelectedPair from "@/types/SelectedPair";
 import BettingTicket from "@/types/BettingTicket";
 import BettingService from "@/services/BettingService";
+import GlobalNotification from "@/types/GlobalNotification";
 
 export default defineComponent({
   name: "betting-ticket",
   components: {},
   data() {
     return {
-      totalStake: 0,
-      betAmount: 5,
-      manipulationCost: 0,
-      betAmountFinal: 0,
-      payoutAmount: 0,
-      winAmount: 0,
-      taxAmount: 0,
+
+      bettingTicket: {
+        ticketPairs: this.$store.state.selectedPairsList as SelectedPair[],
+        totalStake:0,
+        betAmount:5,
+        manipulationCost: 0,
+        betAmountFinal: 0,
+        payoutAmount: 0,
+        winAmount: 0,
+        taxAmount: 0,
+        isWinningTicket: false
+      } as BettingTicket,
+
+      
       isInputActive: false,
       maxBetAmount: 20000,
       minBetAmount: 5,
@@ -325,7 +333,7 @@ export default defineComponent({
       },
       deep: true,
     },
-    betAmount: {
+    "bettingTicket.betAmount": {
       handler(val) {
         this.reCalculateTicketVariables(this.$store.getters.selectedPairsList);
         if (val > this.maxBetAmount) {
@@ -343,10 +351,10 @@ export default defineComponent({
       get: function (): string {
         if (this.isInputActive) {
           // Cursor is inside the input field. unformat display value for user
-          return this.betAmount.toString();
+          return this.bettingTicket.betAmount.toString();
         } else {
           // User is not modifying now. Format display value for user interface
-          return this.formatPrice(this.betAmount);
+          return this.formatPrice(this.bettingTicket.betAmount);
         }
       },
       set: function (modifiedValue: string) {
@@ -356,7 +364,7 @@ export default defineComponent({
           newValue = 0;
         }
 
-        this.betAmount = newValue;
+        this.bettingTicket.betAmount = newValue;
       },
     },
   },
@@ -368,10 +376,10 @@ export default defineComponent({
         calculatedStake = calculatedStake * selectedPairsList[index].tip.stake;
       }
 
-      this.totalStake = calculatedStake; // We have the total stake here, now multiply it with betAmount
-      this.manipulationCost = this.betAmount * 0.05; // manipulation costs of 5%
-      this.betAmountFinal = this.betAmount - this.manipulationCost;
-      this.winAmount = this.betAmountFinal * this.totalStake;
+      this.bettingTicket.totalStake = calculatedStake; // We have the total stake here, now multiply it with betAmount
+      this.bettingTicket.manipulationCost = this.bettingTicket.betAmount * 0.05; // manipulation costs of 5%
+      this.bettingTicket.betAmountFinal = this.bettingTicket.betAmount - this.bettingTicket.manipulationCost;
+      this.bettingTicket.winAmount = this.bettingTicket.betAmountFinal * this.bettingTicket.totalStake;
 
       // Apply tax classes here
       /*
@@ -381,7 +389,7 @@ export default defineComponent({
                 500.000 - inf       kn  30 % -- class 4
                 */
 
-      let taxBase = this.winAmount - this.betAmountFinal;
+      let taxBase = this.bettingTicket.winAmount - this.bettingTicket.betAmountFinal;
 
       // Todo: display them as info on tax screen
       let taxClass1Amount = 0;
@@ -405,10 +413,10 @@ export default defineComponent({
         taxClass1Amount = taxBase * 0.1;
       }
 
-      this.taxAmount =
+      this.bettingTicket.taxAmount =
         taxClass1Amount + taxClass2Amount + taxClass3Amount + taxClass4Amount;
 
-      this.payoutAmount = this.winAmount - this.taxAmount;
+      this.bettingTicket.payoutAmount = this.bettingTicket.winAmount - this.bettingTicket.taxAmount;
     },
     formatPrice(value: number) {
       if (typeof value !== "number") {
@@ -424,13 +432,15 @@ export default defineComponent({
     removePairFromList(bettingPair: BettingPair) {
       this.$store.dispatch("removeFromSelectedPairList", bettingPair);
     },
-    showNotification(message: string) {
-      this.$store.dispatch("showGlobalNotification", {
-        id: 0,
-        type: "success",
+    showNotification(message: string, type: string = 'success') {
+
+      let notification: GlobalNotification = {
+        type: type,
         message: message,
         duration: 4000,
-      });
+      }
+
+      this.$store.dispatch("showGlobalNotification", notification);
     },
     formatDate(date: string) {
       const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -441,14 +451,25 @@ export default defineComponent({
     },
     placeBet() {
 
-      let bettingTicket: BettingTicket = {
-        ticketPairs: this.$store.state.selectedPairsList as SelectedPair[],
-        betAmount: this.betAmount
-      }
+      
 
+      BettingService.placeBet(this.bettingTicket).then((response) => {
+          // We have succesifully placed a ticket
+          // Push ticket to the list
+          
+          this.$store.dispatch("addBettingTicketList", response.data);
+          this.$store.dispatch("clearSelectedPairList");
+          this.showNotification('Betting ticket submitted with success!')
+        }).catch((error) => {
+          if (error.response) {
+            // Request made and server responded
+            this.showNotification(error.response.data, 'danger')
 
-      BettingService.placeBet(bettingTicket)
-
+          } else {
+            // Something happened in setting up the request that triggered an Error or there is no response from server
+            this.showNotification("Error placing the bet! Please try again!", 'danger')
+          }
+        });
     }
 
   },

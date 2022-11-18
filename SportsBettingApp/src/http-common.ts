@@ -3,12 +3,8 @@ import { JsonHelper } from "./helpers/JsonHelper";
 
 const apiClient: AxiosInstance = axios.create({
     //baseURL: "http://localhost:3000",
-
-    headers: {
-        "Content-type": "application/json",
-    }
 });
 
-
+apiClient.defaults.headers.post['Content-Type'] = 'application/json';
   
 export default apiClient;

@@ -1,29 +1,15 @@
-import http from "@/http-common";
 import BettingTicket from "@/types/BettingTicket";
+import http from "@/http-common";
 
 /* eslint-disable */
 class BettingService {
+  placeBet(bettingTicket: BettingTicket): Promise<any> {
+    return http.post("/betting/place-bet", bettingTicket);
+  }
 
-
-  placeBet(bettingTicket: BettingTicket): void {
-    
-    fetch("/betting/place-bet", {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(bettingTicket)
-  })
-    .then(response => response.json())
-    .then(() => {
-     
-    })
-    .catch(error => console.error('Unable to add item.', error));
-}
-    
-   
-  
+  getBettingTickets(): Promise<any> {
+    return http.get("/betting/betting-tickets");
+  }
 }
 
 export default new BettingService();

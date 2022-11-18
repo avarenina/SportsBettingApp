@@ -2,6 +2,7 @@
 using Application.Common.Interfaces;
 using Domain.Models;
 using Application.Services;
+using System.Net;
 
 namespace WebApi.Controllers
 {
@@ -28,36 +29,36 @@ namespace WebApi.Controllers
             _repositoryTip = repositoryTip;
             _repositoryBettingPair = repositoryBettingPair;
             _bettingService = bettingService;
-
-           
         }
 
         [Route("place-bet")]
         [HttpPost]
-        public async Task<IActionResult> PlaceBet([FromBody] BettingTicket bettingTicket)
-        {
-            
-            _logger.LogDebug("");
-
-            for(var i = 0; i < bettingTicket.TicketPairs.Count(); i++)
+        public IActionResult PlaceBet([FromBody] BettingTicket bettingTickeDTO)
+        {            
+            try
             {
-                var bettingPair = _repositoryBettingPair.Table.FirstOrDefault(bp => bp.Id == bettingTicket.TicketPairs[i].BettingPair.Id);
-                var selectedTip = _repositoryTip.Table.FirstOrDefault(t => t.Id == bettingTicket.TicketPairs[i].Tip.Id);
-                if (bettingPair != null && selectedTip != null)
-                {
-                    bettingTicket.TicketPairs[i].BettingPair = bettingPair;
-                    bettingTicket.TicketPairs[i].Tip = selectedTip;
-                }
+                var bettingTicket = _bettingService.ValidateAndConstructBettingTicket(bettingTickeDTO);
 
+
+
+                _bettingService.InsertBettingTicket(bettingTicket);
+
+                return Json(bettingTicket);
             }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
 
-            bettingTicket.TicketPlacedTime = DateTime.Now;
+                return BadRequest("Unable to place your bet! Please try again!");
+            }
+           
+        }
 
-
-            _bettingService.InsertTicket(bettingTicket);
-
-
-            return Json("Ticket placed");
+        [Route("betting-tickets")]
+        [HttpGet]
+        public IActionResult GetBettingTickets()
+        {
+            return Json(_bettingService.GetAllBettingTickets().OrderByDescending(bp => bp.Id));
         }
 
     }

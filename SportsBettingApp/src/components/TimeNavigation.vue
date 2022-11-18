@@ -10,6 +10,10 @@
                 {{ bettingDay.label }}
             </router-link>
             <router-link class="day" to="/day/all">ALL</router-link>
+            <a data-bs-toggle="offcanvas" href="#offcanvasExample" @click="setAdministrationTab('wallet')" role="button"
+        aria-controls="offcanvasExample" class="day" style="float:right;color:#f23535 !important;font-weight: 600;">Wallet</a>
+            <a data-bs-toggle="offcanvas" href="#offcanvasExample" @click="setAdministrationTab('tickets')" role="button"
+        aria-controls="offcanvasExample" class="day" style="float:right;color:#f23535 !important;font-weight: 600;">Tickets</a>
         </div>
     </div>
 </template>
@@ -79,10 +83,12 @@ export default defineComponent({
                 if (queryStringId == 'all' || queryStringId == '3h' || queryStringId == '6h' || queryStringId == '12h') {
                     activeDay = { id: 0, date: '', label: queryStringId, queryStringId: queryStringId } as BettingDay
                 }
-
             }
             this.$store.dispatch('setActiveDay', activeDay);
         },
+        setAdministrationTab(tabName: string) {
+            this.$store.dispatch('setAdministrationTab', tabName);
+        }
     },
     watch: {
         '$route'() {

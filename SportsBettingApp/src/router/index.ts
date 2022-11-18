@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import SportCategoryView from "../views/SportCategoryView.vue";
-import AboutView from "../views/AboutView.vue";
-
+import ResultsView from "../views/ResultsView.vue";
+import TicketsView from "../views/TicketsView.vue";
+import WalletView from "../views/WalletView.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -10,16 +10,25 @@ const routes: Array<RouteRecordRaw> = [
     component: HomeView,
   },
   {
-    path: "/about",
-    name: "about",
-    component: AboutView,
-  },
-
-  {
     path: "/day/:day?",
     name: "day",
     alias: "/day/:day/sport/:id",
     component: HomeView,
+  },
+  {
+    path: "/results",
+    name: "results",
+    component: ResultsView,
+  },
+  {
+    path: "/tickets",
+    name: "tickets",
+    component: TicketsView,
+  },
+  {
+    path: "/wallet",
+    name: "wallet",
+    component: WalletView,
   },
 ];
 

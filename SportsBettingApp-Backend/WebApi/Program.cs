@@ -38,7 +38,7 @@ builder.Services.AddScoped<BettingService>();
 builder.Services.AddTransient<DbInitializer>();
 var app = builder.Build();
 
-await SeedDataAsync(app);
+SeedData(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -56,7 +56,7 @@ app.Run();
 
 
 //Seed Data
-async Task SeedDataAsync(IHost app)
+void SeedData(IHost app)
 {
     var scopedFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 
@@ -64,6 +64,6 @@ async Task SeedDataAsync(IHost app)
     {
         var service = scope.ServiceProvider.GetRequiredService<DbInitializer>();
          
-        await service.InitializeAsync();
+        service.Initialize();
     }
 }

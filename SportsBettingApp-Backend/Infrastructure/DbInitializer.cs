@@ -19,29 +19,27 @@ namespace Infrastructure.Data
             _repositoryBettingPairs = repositoryBettingPairs;
         }
 
-        public async Task InitializeAsync()
+        public void Initialize()
         {
 
             if (!_repositorySports.Table.Any())
             {
-                await InsertSportsAsync();
+                InsertSportsAsync();
             }
 
             if (!_repositoryBettingDays.Table.Any())
             {
-                await InsertBettingDaysAsync();
+                InsertBettingDaysAsync();
             }
 
             if (!_repositoryBettingPairs.Table.Any())
             {
-                await InsertBettingPairsAsync();
+                InsertBettingPairsAsync();
             }
-
-
 
         }
 
-        public async Task InsertSportsAsync()
+        public void InsertSportsAsync()
         {
             var sports = new Sport[]
             {
@@ -137,7 +135,7 @@ namespace Infrastructure.Data
 
         }
 
-        public async Task InsertBettingDaysAsync()
+        public void InsertBettingDaysAsync()
         {
             var currentTime = DateTime.Now;
 
@@ -151,7 +149,7 @@ namespace Infrastructure.Data
             
         }
 
-        public async Task InsertBettingPairsAsync()
+        public void InsertBettingPairsAsync()
         {
             var sportToAdd = _repositorySports.Table.FirstOrDefault(s => s.Name == "Football");
 
