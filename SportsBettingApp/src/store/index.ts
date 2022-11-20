@@ -8,6 +8,8 @@ import SelectedPair from "@/types/SelectedPair";
 import GlobalNotification from "@/types/GlobalNotification";
 import BettingDay from "@/types/BettingDay";
 import BettingTicket from "@/types/BettingTicket";
+import { WalletTransaction } from "@/types/WalletTransaction";
+
 export default createStore({
   state: {
     sportsList: [] as Sport[],
@@ -15,9 +17,11 @@ export default createStore({
     selectedPairsList: [] as SelectedPair[],
     bettingTicketsList: [] as BettingTicket[],
     administrationTab: 'tickets',
+    walletAvailableFunds: 0,
     activeBettingDay: {} as BettingDay,
     globalNotifictationList: [] as GlobalNotification[],
     globalNotificationsIndex: 0,
+    walletTransactionList: [] as WalletTransaction[],
   },
   mutations: {
     UPDATE_SELECTED_PAIRS(state, payload) {
@@ -41,6 +45,12 @@ export default createStore({
     },
     UPDATE_BETTING_TICKETS(state, payload) {
       state.bettingTicketsList = payload;
+    },
+    UPDATE_AVAILABLE_FUNDS(state, payload) {
+      state.walletAvailableFunds = payload;
+    },
+    UPDATE_TRANSACTION_LIST(state, payload) {
+      state.walletTransactionList = payload;
     },
   },
   actions: {
@@ -99,6 +109,18 @@ export default createStore({
       bettingTicketsList.unshift(newBettingTicket);
       context.commit("UPDATE_BETTING_TICKETS", bettingTicketsList);
     },
+    updateWalletAvailableFunds(context, amount: number) {
+      context.commit("UPDATE_AVAILABLE_FUNDS", amount);
+    },
+    updateTransactionsList(context, newTransactionsList: WalletTransaction[]): void {
+      const transactionsList = newTransactionsList;
+      context.commit("UPDATE_TRANSACTION_LIST", transactionsList);
+    },
+    addTransactionToList(context, newTransaction: WalletTransaction): void {
+      const transactionsList = context.state.walletTransactionList;
+      transactionsList.unshift(newTransaction);
+      context.commit("UPDATE_TRANSACTION_LIST", transactionsList);
+    },
   },
   getters: {
     selectedPairsList: function (state): SelectedPair[] {
@@ -122,6 +144,11 @@ export default createStore({
     bettingTicketsList: function (state): BettingTicket[] {
       return state.bettingTicketsList;
     },
-
+    walletAvailableFunds: function (state) :number {
+      return state.walletAvailableFunds;
+    },
+    walletTransactionList: function (state) : WalletTransaction[] {
+      return state.walletTransactionList;
+    }
   },
 });

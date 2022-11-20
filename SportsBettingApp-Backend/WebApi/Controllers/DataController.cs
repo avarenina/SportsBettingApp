@@ -7,7 +7,7 @@ using Application.Services;
 namespace WebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class DataController : ControllerBase
     {
 
@@ -41,6 +41,13 @@ namespace WebApi.Controllers
         public async Task<IEnumerable<BettingPair>> GetBettingPairsAsync()
         {            
             return await _dataService.GetBettingPairsAsync();
+        }
+
+        [Route("special-offer")]
+        [HttpGet]
+        public async Task<IEnumerable<SpecialOffer>> GetSpecialOfferAsync()
+        {
+            return await _dataService.GetSpecialOfferAsync();
         }
     }
 }

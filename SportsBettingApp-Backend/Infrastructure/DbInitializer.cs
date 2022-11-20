@@ -10,13 +10,15 @@ namespace Infrastructure.Data
         private readonly IRepository<Sport> _repositorySports;
         private readonly IRepository<BettingDay> _repositoryBettingDays;
         private readonly IRepository<BettingPair> _repositoryBettingPairs;
+        private readonly IRepository<SpecialOffer> _specialOfferRepository;
 
-        public DbInitializer(ILogger<DbInitializer> logger, IRepository<BettingDay> repositoryBettingDays, IRepository<Sport> repositorySports, IRepository<BettingPair> repositoryBettingPairs)
+        public DbInitializer(ILogger<DbInitializer> logger, IRepository<BettingDay> repositoryBettingDays, IRepository<Sport> repositorySports, IRepository<BettingPair> repositoryBettingPairs, IRepository<SpecialOffer> specialOfferRepository)
         {
             _logger = logger;
             _repositorySports = repositorySports;
             _repositoryBettingDays = repositoryBettingDays;
             _repositoryBettingPairs = repositoryBettingPairs;
+            _specialOfferRepository = specialOfferRepository;
         }
 
         public void Initialize()
@@ -35,6 +37,11 @@ namespace Infrastructure.Data
             if (!_repositoryBettingPairs.Table.Any())
             {
                 InsertBettingPairsAsync();
+            }
+
+            if (!_specialOfferRepository.Table.Any())
+            {
+                InsertSpecialOfferAsync();
             }
 
         }
@@ -206,10 +213,125 @@ namespace Infrastructure.Data
                         new Tip { Name = "12", Stake = 1.5 }
                     }
                 },
+                 new BettingPair
+                {
+                    FirstOpponent = "Varazdin",
+                    SecondOpponent = "Zagreb",
+                    CategoryId = 0,
+                    MatchStartUTC = DateTime.Now.AddDays(1),
+                    Sport = sportToAdd,
+                    Tips = new List<Tip>()
+                    {
+                        new Tip { Name = "1", Stake = 1.5 },
+                        new Tip { Name = "x", Stake = 1.5 },
+                        new Tip { Name = "2", Stake = 1.5 },
+                        new Tip { Name = "1x", Stake = 1.5 },
+                        new Tip { Name = "x2", Stake = 1.5 },
+                        new Tip { Name = "12", Stake = 1.5 }
+                    }
+                },
+                  new BettingPair
+                {
+                    FirstOpponent = "Zagreb",
+                    SecondOpponent = "Sinj",
+                    CategoryId = 0,
+                    MatchStartUTC = DateTime.Now.AddDays(1),
+                    Sport = sportToAdd,
+                    Tips = new List<Tip>()
+                    {
+                        new Tip { Name = "1", Stake = 1.5 },
+                        new Tip { Name = "x", Stake = 1.3 },
+                        new Tip { Name = "2", Stake = 1.5 },
+                        new Tip { Name = "1x", Stake = 1.5 },
+                        new Tip { Name = "x2", Stake = 1.5 },
+                        new Tip { Name = "12", Stake = 1.5 }
+                    }
+                },
+                   new BettingPair
+                {
+                    FirstOpponent = "Sibenik",
+                    SecondOpponent = "Hajduk",
+                    CategoryId = 0,
+                    MatchStartUTC = DateTime.Now.AddDays(1),
+                    Sport = sportToAdd,
+                    Tips = new List<Tip>()
+                    {
+                        new Tip { Name = "1", Stake = 1.1 },
+                        new Tip { Name = "x", Stake = 1.5 },
+                        new Tip { Name = "2", Stake = 1.5 },
+                        new Tip { Name = "1x", Stake = 1.5 },
+                        new Tip { Name = "x2", Stake = 1.5 },
+                        new Tip { Name = "12", Stake = 1.5 }
+                    }
+                },
+                    new BettingPair
+                {
+                    FirstOpponent = "Istra",
+                    SecondOpponent = "Rijeka",
+                    CategoryId = 0,
+                    MatchStartUTC = DateTime.Now.AddDays(1),
+                    Sport = sportToAdd,
+                    Tips = new List<Tip>()
+                    {
+                        new Tip { Name = "1", Stake = 1.05 },
+                        new Tip { Name = "x", Stake = 1.5 },
+                        new Tip { Name = "2", Stake = 1.5 },
+                        new Tip { Name = "1x", Stake = 1.5 },
+                        new Tip { Name = "x2", Stake = 1.5 },
+                        new Tip { Name = "12", Stake = 1.5 }
+                    }
+                },
 
             };
 
             _repositoryBettingPairs.Insert(bettingPairs);   
         }
+    
+        public void InsertSpecialOfferAsync()
+        {
+            var bettingpairToAdd = _repositoryBettingPairs.Table.ToList();
+
+            var specialOffers = new SpecialOffer[]
+            {
+                new SpecialOffer
+                {
+                    BettingPair = bettingpairToAdd[0],
+                    SportId = bettingpairToAdd[0].Sport.Id,
+                    Tips = new List<Tip>()
+                    {
+                         new Tip { Name = "1", Stake = 1.8 },
+                        new Tip { Name = "x", Stake = 1.9 },
+                        new Tip { Name = "2", Stake = 2 },
+                    }
+                },
+                 new SpecialOffer
+                {
+                    BettingPair = bettingpairToAdd[1],
+                    SportId = bettingpairToAdd[1].Sport.Id,
+                    Tips = new List<Tip>()
+                    {
+                         new Tip { Name = "1", Stake = 1.15 },
+                        new Tip { Name = "x", Stake = 1.9 },
+                        new Tip { Name = "2", Stake = 2 },
+                    }
+                },
+                  new SpecialOffer
+                {
+                    BettingPair = bettingpairToAdd[2],
+                    SportId = bettingpairToAdd[2].Sport.Id,
+                    Tips = new List<Tip>()
+                    {
+                         new Tip { Name = "1", Stake = 1.8 },
+                        new Tip { Name = "x", Stake = 1.9 },
+                        new Tip { Name = "2", Stake = 2 },
+                    }
+                }
+
+            };
+
+            _specialOfferRepository.Insert(specialOffers);
+
+        }
+    
     }
 }

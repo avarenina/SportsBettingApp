@@ -7,42 +7,46 @@ using System.Net;
 namespace WebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class BettingController : Controller
     {
         
         private readonly ILogger<DataController> _logger;
-        
-        private readonly IRepository<BettingTicket> _repositoryBettingTicket;
-        private readonly IRepository<Tip> _repositoryTip;
-        private readonly IRepository<BettingPair> _repositoryBettingPair;
         private readonly BettingService _bettingService;
+        private readonly WalletService _walletService;
 
-        public BettingController(ILogger<DataController> logger, 
-            IRepository<BettingTicket> repositoryBettingTicket, 
-            IRepository<Tip> repositoryTip, 
-            IRepository<BettingPair> repositoryBettingPair,
-            BettingService bettingService)
+        public BettingController(ILogger<DataController> logger,
+            BettingService bettingService,
+            WalletService walletService)
         {
             _logger = logger;
-            _repositoryBettingTicket = repositoryBettingTicket;
-            _repositoryTip = repositoryTip;
-            _repositoryBettingPair = repositoryBettingPair;
             _bettingService = bettingService;
+            _walletService = walletService;
         }
 
         [Route("place-bet")]
         [HttpPost]
-        public IActionResult PlaceBet([FromBody] BettingTicket bettingTickeDTO)
+        public async Task<IActionResult> PlaceBetAsync([FromBody] BettingTicket bettingTickeDTO)
         {            
             try
             {
                 var bettingTicket = _bettingService.ValidateAndConstructBettingTicket(bettingTickeDTO);
 
-                // next calculate/verify all properties of the ticket
+                var walletBalance = await _walletService.GetWalletBalanceFromTransactionsAsync();
 
+                if (bettingTicket.BetAmount > walletBalance)
+                    return BadRequest("Wallet balance is too low for the bet! Please add funds to your wallet!");
 
+                // create a transaction for this ticket
+                var transaction = new WalletTransaction
+                {
+                    TransactionTimestamp = DateTime.Now,
+                    TransactionAmount = (-bettingTicket.BetAmount),
+                    TransactionType = TransactionType.Bet,
+                    WalletFinalAmount = walletBalance - bettingTicket.BetAmount
+                };
 
+                bettingTicket.WalletTransaction = transaction;
 
                 _bettingService.InsertBettingTicket(bettingTicket);
 
@@ -54,7 +58,6 @@ namespace WebApi.Controllers
 
                 return BadRequest("Unable to place your bet! Please try again!");
             }
-           
         }
 
         [Route("betting-tickets")]
@@ -63,20 +66,5 @@ namespace WebApi.Controllers
         {
             return Json(_bettingService.GetAllBettingTickets().OrderByDescending(bp => bp.Id));
         }
-
-
-        
     }
-
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -25,6 +25,7 @@ namespace Infrastructure.Persistence
         public DbSet<Tip> Tips { get; set; }
         public DbSet<BettingTicket> BettingTickets { get; set; }
         public DbSet<TicketPair> TicketPairs { get; set; }
+        public DbSet<SpecialOffer> SpecialOffer { get; set; }
         #endregion
 
 

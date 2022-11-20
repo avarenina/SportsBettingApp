@@ -7,7 +7,7 @@ namespace Domain.Models
     {
        
         [JsonPropertyName("ticketPairs")]
-        public List<TicketPair> TicketPairs { get; set; }
+        public List<TicketPair> TicketPairs { get; set; } = new List<TicketPair>();
 
         [JsonPropertyName("betAmount")]
         public double BetAmount { get; set; }
@@ -31,5 +31,7 @@ namespace Domain.Models
         public double PayoutAmount { get; set; }
 
         public double ManipulationCost { get; set; }
+
+        public WalletTransaction? WalletTransaction { get; set; }
     }
 }

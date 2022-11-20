@@ -4,22 +4,27 @@
         <b-modal size="lg" v-model="modalShow" title="Ticket details">
             <div class="pair-table">
                 <div v-for="pair in bettingTicket.ticketPairs" :key="pair.bettingPair.id" class="table-row">
-                    <div class="name">{{pair.bettingPair.firstOpponent}} - {{pair.bettingPair.secondOpponent}}</div>
-                    <div class="time">{{new Date(pair.bettingPair.matchStartUTC).toLocaleString()}}</div>
-                    <div class="stake">{{pair.tip.stake}}</div>
-                    <div class="selected-tip">{{pair.tip.name}}</div>
+                    <div class="name">{{ pair.bettingPair.firstOpponent }} - {{ pair.bettingPair.secondOpponent }}</div>
+                    <div class="time">{{ new Date(pair.bettingPair.matchStartUTC).toLocaleString() }}</div>
+                    <div class="stake">{{ pair.tip.stake }}</div>
+                    <div class="selected-tip">{{ pair.tip.name }}</div>
                     <div class="score">Not started</div>
                 </div>
-               
+
             </div>
             <div class="summary">
-                <div class="info-ticket"><span class="title-text">STAKE:</span> {{formatPrice(bettingTicket.totalStake)}}</div>
-                <div class="info-ticket"><span class="title-text">BET AMOUNT:</span> {{formatPrice(bettingTicket.betAmount)}} € <span class="title-text" style="font-size:small !important;">({{formatPrice(bettingTicket.betAmountFinal)}} € + {{formatPrice(bettingTicket.manipulationCost)}} € mc)</span></div>
-                <div class="info-ticket"><span class="title-text">PAYOUT:</span> {{formatPrice(bettingTicket.payoutAmount)}} €</div>
+                <div class="info-ticket"><span class="title-text">STAKE:</span>
+                    {{ formatPrice(bettingTicket.totalStake) }}</div>
+                <div class="info-ticket"><span class="title-text">BET AMOUNT:</span>
+                    {{ formatPrice(bettingTicket.betAmount) }} € <span class="title-text"
+                        style="font-size:small !important;">({{ formatPrice(bettingTicket.betAmountFinal) }} € +
+                        {{ formatPrice(bettingTicket.manipulationCost) }} € mc)</span></div>
+                <div class="info-ticket"><span class="title-text">PAYOUT:</span>
+                    {{ formatPrice(bettingTicket.payoutAmount) }} €</div>
             </div>
             <div class="tax-info">
                 <span class="tax-title">TAX:</span>
-                <span class="tax-value">{{formatPrice(bettingTicket.taxAmount)}} €</span>
+                <span class="tax-value">{{ formatPrice(bettingTicket.taxAmount) }} €</span>
             </div>
         </b-modal>
     </div>
@@ -29,43 +34,48 @@
 <style>
 .info-ticket {
     box-sizing: border-box;
-color: rgb(45, 55, 62);
-cursor: default;
-display: table-cell;
-font-family: "Open Sans", sans-serif;
-font-size: 18px;
-font-weight: 700;
-text-align: left;
-vertical-align: top;
--moz-text-size-adjust: none
+    color: rgb(45, 55, 62);
+    cursor: default;
+    display: table-cell;
+    font-family: "Open Sans", sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: left;
+    vertical-align: top;
+    -moz-text-size-adjust: none
 }
+
 .title-text {
-box-sizing: border-box;
-color: rgb(153, 153, 153);
-cursor: default;
-font-family: "Open Sans", sans-serif;
-font-size: 16.2px;
-font-weight: 400;
-text-align: left;
--moz-text-size-adjust: none
+    box-sizing: border-box;
+    color: rgb(153, 153, 153);
+    cursor: default;
+    font-family: "Open Sans", sans-serif;
+    font-size: 16.2px;
+    font-weight: 400;
+    text-align: left;
+    -moz-text-size-adjust: none
 }
+
 .tax-info {
-  width: 100%;
-  padding: 0px 10px;
+    width: 100%;
+    padding: 0px 10px;
 }
+
 .tax-value {
-  color: #666;
-  padding: 15px;
-  font-size: 12px;
+    color: #666;
+    padding: 15px;
+    font-size: 12px;
 }
+
 .tax-title {
-    
-  padding: 5px 0;
-  font-size: 12px;
-  font-weight: bold;
-  text-transform: uppercase;
+
+    padding: 5px 0;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
 
 }
+
 .summary {
     display: grid;
     grid-template-columns: 1.5fr 4.5fr 2fr;
@@ -73,14 +83,15 @@ text-align: left;
     border-bottom-style: solid;
     border-bottom-width: 2px;
     padding: 20px 10px 0px 10px
-
 }
+
 .pair-table {
     border-top: solid;
     border-right: solid;
     border-left: solid;
     border-width: 1px;
 }
+
 .table-row {
     display: grid;
     grid-template-columns: 7fr 3fr 0.7fr 0.3fr 2fr;
@@ -88,8 +99,9 @@ text-align: left;
     border-width: 1px;
 
 }
+
 .name {
-    padding-left:10px;
+    padding-left: 10px;
 }
 
 .time {
@@ -101,10 +113,11 @@ text-align: left;
 }
 
 .selected-tip {
-   text-align: center;
+    text-align: center;
 }
+
 .score {
-    padding-left:10px;
+    padding-left: 10px;
 }
 
 .modal-footer>.btn-secondary {
@@ -129,14 +142,27 @@ export default defineComponent({
     data() {
         return {
             modalShow: false,
-            
+
         }
     },
     watch: {
 
         bettingTicket: {
-            handler() {
-                this.modalShow = true;
+            handler(value) {
+                if(value.id)
+                {
+                    this.modalShow = true;
+                }
+                
+            },
+        },
+        modalShow: {
+            handler(val) {
+                if(val == false)
+                {
+                    // emit the event so that parent know we have closed the modal
+                    this.$emit('modalClosed')
+                }
             },
         }
     },

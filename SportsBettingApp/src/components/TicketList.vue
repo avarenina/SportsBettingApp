@@ -1,16 +1,24 @@
 <template>
     <div class="ticket-list">
-        <ul class="list-group">
+        <ul class="list-group" v-if="$store.getters.bettingTicketsList.length > 0">
             <li v-for="bettingTicket in $store.getters.bettingTicketsList" :key="bettingTicket.id"
                 class="list-group-item">
                 <div class="grid-container">
                     <div class="ticket-info">
                         <div>
-                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Bet amount"><font-awesome-icon icon="fa-solid fa-money-bill" /> {{ formatPrice(bettingTicket.betAmount) }} €</span>
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Bet amount">
+                                <font-awesome-icon icon="fa-solid fa-money-bill" /> {{
+                                        formatPrice(bettingTicket.betAmount)
+                                }} €
+                            </span>
                             <span class="icon icon-arrow">
                                 <font-awesome-icon icon="fa-solid fa-arrow-right" />
                             </span>
-                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Possible win amount"><font-awesome-icon icon="fa-solid fa-money-bills" /> {{ formatPrice(bettingTicket.winAmount) }} €</span>
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Possible win amount">
+                                <font-awesome-icon icon="fa-solid fa-money-bills" /> {{
+                                        formatPrice(bettingTicket.winAmount)
+                                }} €
+                            </span>
 
                         </div>
                         <div data-bs-toggle="tooltip" data-bs-placement="top" title="Ticket placed date">
@@ -20,14 +28,18 @@
                             <span>{{ new Date(bettingTicket.ticketPlacedTime).toLocaleString() }}</span>
                         </div>
                     </div>
-                    <div @click="loadBettingTicketDetails(bettingTicket)" class="ticket-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="View ticket">
+                    <div @click="loadBettingTicketDetails(bettingTicket)" class="ticket-icon" data-bs-toggle="tooltip"
+                        data-bs-placement="top" title="View ticket">
                         <font-awesome-icon icon="fa-solid fa-magnifying-glass" />
                     </div>
                 </div>
             </li>
         </ul>
+        <div v-else>
+            There are no tickets available!
+        </div>
     </div>
-    <BettingTicketDetails :bettingTicket="selectedBettingTicket"/>
+    <BettingTicketDetails :bettingTicket="selectedBettingTicket" @modalClosed="modalCloseCallback" />
 </template>
 <style>
 .grid-container {
@@ -101,9 +113,11 @@ export default defineComponent({
             });
             return formatter.format(value).replace("EUR", "").trim();
         },
-        loadBettingTicketDetails(bettingTicket: BettingTicket)
-        {
+        loadBettingTicketDetails(bettingTicket: BettingTicket) {
             this.selectedBettingTicket = bettingTicket;
+        },
+        modalCloseCallback() {
+            this.selectedBettingTicket = {} as BettingTicket;
         }
     },
     mounted() {

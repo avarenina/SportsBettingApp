@@ -76,12 +76,14 @@
 
     <div class="betting-controls">
       <div class="d-grid gap-2">
-        <button class="btn btn-primary btn-bet" :disabled="betErrorMessage != ''" @click="placeBet()" type="button">
+        <button class="btn btn-primary btn-bet" :disabled="betErrorMessage != '' || $store.getters.walletAvailableFunds < 5" @click="placeBet()" type="button">
           Place Bet
         </button>
       </div>
     </div>
   </div>
+  <div v-for="pair in $store.getters.selectedPairsList" :key="pair.bettingPair.id">
+  {{pair}}</div>
 </template>
 <style>
 .pair-name {
@@ -329,14 +331,48 @@ export default defineComponent({
   watch: {
     "$store.state.selectedPairsList": {
       handler(val) {
+        this.bettingTicket.ticketPairs = this.$store.state.selectedPairsList;
         this.reCalculateTicketVariables(val);
+
+        /*Validate special offer rules here
+        o Parovi top ponude se ne mogu kombinirati međusobno
+        o Ako je par uplaćen kao top ponuda, ne može se isti taj par odigrati kao dio obične ponude i obratno.
+        o Prilikom uplate listića sa parom top ponude, listić mora sadržavati bar još 5 parova kvote >= 1.1 */
+        
+        var specialOfferPairs = this.bettingTicket.ticketPairs.filter(tp => tp.isSpecialOffer === true);
+        if(specialOfferPairs.length > 1)
+        {
+          this.betErrorMessage = "Ticket can contain only one special offer pair!";
+        }
+        else if (specialOfferPairs.length == 1){
+          // there is one present, now check if total is 5 or more and all of them are 1.1 or greater
+          if(this.bettingTicket.ticketPairs.length < 5)
+          {
+            this.betErrorMessage = "When using special offer you have to select at least 4 other normal pairs!";
+          } else {
+            // check for minimum stake
+            let pairsWithMinimumStake = this.bettingTicket.ticketPairs.filter(sp => sp.tip.stake < 1.1);
+            if(pairsWithMinimumStake.length > 0)
+            {
+              this.betErrorMessage = "When using special offer you have to select other pairs with stake >= 1.1!";
+            } else {
+              this.betErrorMessage = "";
+            }
+          }
+          
+        }
+        else {
+          this.betErrorMessage = "";
+        }
       },
       deep: true,
     },
     "bettingTicket.betAmount": {
       handler(val) {
         this.reCalculateTicketVariables(this.$store.getters.selectedPairsList);
-        if (val > this.maxBetAmount) {
+        if(val > this.$store.getters.walletAvailableFunds){
+          this.betErrorMessage = "Bet amount is higher than wallet balance! Available funds : " + this.formatPrice(this.$store.getters.walletAvailableFunds) + " €";
+        } else if (val > this.maxBetAmount) {
           this.betErrorMessage = "Maximum bet amount is 20.000,00 €";
         } else if (val < this.minBetAmount) {
           this.betErrorMessage = "Minimum bet amount is 5,00 €";
@@ -455,6 +491,11 @@ export default defineComponent({
           // Push ticket to the list
           this.resetBettingTicket();
           this.$store.dispatch("addBettingTicketList", response.data);
+
+          // Push transaction to the list and update wallet balance
+          this.$store.dispatch("addTransactionToList", response.data.walletTransaction);
+          this.$store.dispatch("updateWalletAvailableFunds", response.data.walletTransaction.walletFinalAmount)
+
           this.$store.dispatch("clearSelectedPairList");
           this.showNotification('Betting ticket submitted with success!')
         }).catch((error) => {

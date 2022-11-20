@@ -9,24 +9,26 @@ namespace Application.Services
 {
     public class BettingService
     {
-        private readonly IRepository<BettingTicket> _repositoryBettingTickets;
-        private readonly IRepository<Tip> _repositoryTip;
-        private readonly IRepository<BettingPair> _repositoryBettingPair;
+        private readonly IRepository<BettingTicket> _bettingTicketRepository;
+        private readonly IRepository<Tip> _tipRepository;
+        private readonly IRepository<BettingPair> _bettingPairRepository;
         private readonly IRepository<TicketPair> _ticketPairRepository;
         private readonly ILogger<DataService> _logger;
-       
+        private readonly IRepository<SpecialOffer> _specialOfferRepository;
 
         public BettingService(ILogger<DataService> logger, 
-            IRepository<BettingTicket> repositoryBettingTickets,
-            IRepository<Tip> repositoryTip,
-            IRepository<BettingPair> repositoryBettingPair,
-            IRepository<TicketPair> ticketPairRepository)
+            IRepository<BettingTicket> bettingTicketRepository,
+            IRepository<Tip> tipRepository,
+            IRepository<BettingPair> bettingPairRepository,
+            IRepository<TicketPair> ticketPairRepository,
+            IRepository<SpecialOffer> specialOfferRepository)
         {
             _logger = logger;
-            _repositoryBettingTickets = repositoryBettingTickets;
-            _repositoryTip = repositoryTip;
-            _repositoryBettingPair = repositoryBettingPair;
+            _bettingTicketRepository = bettingTicketRepository;
+            _tipRepository = tipRepository;
+            _bettingPairRepository = bettingPairRepository;
             _ticketPairRepository = ticketPairRepository;
+            _specialOfferRepository = specialOfferRepository;
         }
 
 
@@ -35,7 +37,7 @@ namespace Application.Services
             if (bettingTicket == null)
                 throw new ArgumentNullException(nameof(bettingTicket));
 
-            _repositoryBettingTickets.Insert(bettingTicket);
+            _bettingTicketRepository.Insert(bettingTicket);
         }
 
         public BettingTicket GetBettingTicketById(int id)
@@ -43,12 +45,12 @@ namespace Application.Services
             if (id == 0)
                 return null;
 
-            return _repositoryBettingTickets.GetById(id);
+            return _bettingTicketRepository.GetById(id);
         }
 
         public IEnumerable<BettingTicket> GetAllBettingTickets()
         {
-            return _repositoryBettingTickets.Table.Include(bt => bt.TicketPairs)
+            return _bettingTicketRepository.Table.Include(bt => bt.TicketPairs)
                 .ThenInclude(x => x.BettingPair)
                 .Include(y => y.TicketPairs).ThenInclude(z => z.Tip).IgnoreAutoIncludes()
                 .ToList();
@@ -72,25 +74,53 @@ namespace Application.Services
                 IsCompleted = false,
             };
 
+            var specialOfferPairs = new List<BettingPair>();
+
             // Assemble the pairs
             foreach (var ticketPair in bettingTicketDTO.TicketPairs)
             {
-                var bettingPair = _repositoryBettingPair.Table.FirstOrDefault(bp => bp.Id ==ticketPair.BettingPair.Id);
-                var selectedTip = _repositoryTip.Table.FirstOrDefault(t => t.Id == ticketPair.Tip.Id);
+                var bettingPair = _bettingPairRepository.Table.FirstOrDefault(bp => bp.Id ==ticketPair.BettingPair.Id);
+                var selectedTip = _tipRepository.Table.FirstOrDefault(t => t.Id == ticketPair.Tip.Id);
+
                 if (bettingPair != null && selectedTip != null)
                 {
                     // Means that the betting pair has already started! This should not happen because we filter betting pairs on the frontend
                     if (bettingPair.MatchStartUTC <= DateTime.Now)
                         throw new Exception("One or more betting pairs have started playing!");
                     
+                    if(IsTipFromSpecialOffer(bettingPair, selectedTip))
+                    {
+                        specialOfferPairs.Add(bettingPair);
+                    }
+
                     bettingTicket.TicketPairs.Add(new TicketPair { BettingPair = bettingPair, Tip = selectedTip });
                 }
                 else
                 {
+
+
                     throw new Exception("Betting ticket contains some invalid betting pairs and tips!");
                 }
 
             }
+
+            if(specialOfferPairs.Count > 1)
+            {
+                throw new Exception("Ticket can contain only one specail pair!");
+            }
+            else if(specialOfferPairs.Count == 1)
+            {
+                var tipsWithSmallStake = bettingTicket.TicketPairs.Where(tp => tp.Tip.Stake < 1.1);
+                if(tipsWithSmallStake.Any())
+                {
+                    throw new Exception("Ticket can contain only tips with stake >= 1.1!");
+                }
+                else if(bettingTicket.TicketPairs.Count < 5)
+                {
+                    throw new Exception("Ticket that has special offer has to have at least 4 other pairs!");
+                }
+            }
+            
 
             bettingTicket.TotalStake = CalculateTotalStake(bettingTicket);
             bettingTicket.ManipulationCost = bettingTicket.BetAmount * 0.05; // 5% of manipultion fee
@@ -119,6 +149,17 @@ namespace Application.Services
 
 
             return totalStake;
+        }
+
+        private bool IsTipFromSpecialOffer(BettingPair bettingPair, Tip tip)
+        {
+            var specialOffer = _specialOfferRepository.Table.FirstOrDefault(so => so.BettingPair.Id == bettingPair.Id && so.Tips.Any(t => t.Id == tip.Id));
+            if(specialOffer == null)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private double CalculateTax(double winAmount, double betAmount)

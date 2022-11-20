@@ -34,6 +34,7 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
 
 builder.Services.AddScoped<DataService>();
 builder.Services.AddScoped<BettingService>();
+builder.Services.AddScoped<WalletService>();
 
 builder.Services.AddTransient<DbInitializer>();
 var app = builder.Build();
@@ -56,14 +57,12 @@ app.Run();
 
 
 //Seed Data
-void SeedData(IHost app)
+static void SeedData(IHost app)
 {
     var scopedFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 
-    using (var scope = scopedFactory.CreateScope())
-    {
-        var service = scope.ServiceProvider.GetRequiredService<DbInitializer>();
-         
-        service.Initialize();
-    }
+    using var scope = scopedFactory.CreateScope();
+    var service = scope.ServiceProvider.GetRequiredService<DbInitializer>();
+
+    service.Initialize();
 }

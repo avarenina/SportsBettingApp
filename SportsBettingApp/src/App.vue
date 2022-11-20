@@ -5,20 +5,7 @@
             <div class="container">
                 <a class="navbar-brand" href="">Sports Betting App</a>
                 <div class="collapse navbar-collapse">
-                    <ul class="navbar-nav mb-lg-0">
-                        <li class="nav-item">
-                            <router-link class="nav-link" to="/">Bet</router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link class="nav-link" to="/results">Results</router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link class="nav-link" to="/tickets">Tickets</router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link class="nav-link" to="/wallet">Wallet</router-link>
-                        </li>
-                    </ul>
+                    
                 </div>
             </div>
         </nav>

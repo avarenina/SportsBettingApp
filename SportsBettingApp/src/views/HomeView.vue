@@ -13,7 +13,6 @@
                 <BettingTicket />
             </div>
         </div>
-
     </div>
     <!--Offcanvas - wallet and tickets-->
     <OffCanvas />
@@ -27,7 +26,6 @@
 <script lang="ts">
 
 import { defineComponent } from "vue";
-
 import TimeNavigation from "@/components/TimeNavigation.vue";
 import SportsNavigation from "@/components/SportsNavigation.vue";
 import SportsList from "@/components/SportsList.vue";

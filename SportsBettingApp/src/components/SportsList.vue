@@ -1,5 +1,6 @@
 <template>
     <div class="accordion">
+        <SpecialOffer />
         <div v-for="sport in $store.getters.activeSportsList" :key="sport.id" class="accordion-item">
             <h2 class="accordion-header" :id="'sport-category-panel-heading-' + sport.id">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse"
@@ -37,8 +38,8 @@
                                     <td v-for="tip in sport.availableTips" :key="tip.id" style="padding: 0px !important"
                                         class="bet-quote td-shrink clickable">
                                         <div v-if="pair.tips.some((t) => t.name == tip.name)" style="padding: 0.5rem !important" @click="toggleSelection(pair, tip.name)"
-                                            :class="$store.getters.selectedPairsList.some((sp: SelectedPair) => sp.bettingPair.id === pair.id && sp.tip.name === tip.name) ? 'quote-selected' : ''">
-                                            {{pair.tips.filter((t) => t.name === tip.name)[0].stake}}
+                                            :class="$store.getters.selectedPairsList.some((sp: SelectedPair) => sp.bettingPair.id === pair.id && sp.tip.id === getTipByName(pair, tip.name).id) ? 'quote-selected' : ''">
+                                            {{getTipByName(pair, tip.name).stake}}
                                         </div>
                                         <div v-else style="padding: 0.5rem !important">
                                             -
@@ -101,6 +102,7 @@
     white-space: nowrap;
     text-align: center;
     padding: 0 4px;
+    min-width: 34px;
 }
 
 .td-shrink {
@@ -141,8 +143,13 @@ import BettingPair from "@/types/BettingPair";
 import Tip from "@/types/Tip";
 import SelectedPair from "@/types/SelectedPair";
 import BettingDay from "@/types/BettingDay";
+import SpecialOffer from "./SpecialOffer.vue";
+
 export default defineComponent({
     name: "sports-list",
+    components: {
+        SpecialOffer
+    },
     data() {
         return {
             bettingPairs: [] as BettingPair[],
@@ -171,6 +178,15 @@ export default defineComponent({
                     });
                 });
         },
+        getTipByName(bettingPair: BettingPair, name: string) : Tip{
+            let tip = bettingPair.tips.find(t => t.name === name);
+            if(tip)
+            {
+                return tip;
+            }
+            
+            return null as unknown as Tip;
+        },
         getStakeFromTip(tips: Tip[], tipName: string): number {
             for (let index = 0; index < tips.length; ++index) {
                 if (tips[index].name == tipName) {
@@ -191,17 +207,11 @@ export default defineComponent({
             this.$store.dispatch("removeFromSelectedPairList", bettingPair);
         },
         toggleSelection(bettingPair: BettingPair, selectedTip: string) {
+           
             // If we have betting pair then check the tip, if different then remove the selected pair and push new one, otherwise just remove it
-            if (
-                this.$store.getters.selectedPairsList.some(
-                    (sp: SelectedPair) => sp.bettingPair.id === bettingPair.id
-                )
-            ) {
-                if (
-                    !this.$store.getters.selectedPairsList.some(
-                        (sp: SelectedPair) => sp.tip.name === selectedTip
-                    )
-                ) {
+            if (this.$store.getters.selectedPairsList.some((sp: SelectedPair) => sp.bettingPair.id === bettingPair.id)) {
+                if (!this.$store.getters.selectedPairsList.some((sp: SelectedPair) => sp.tip.name === selectedTip) || 
+                !this.$store.getters.selectedPairsList.some((sp: SelectedPair) => sp.tip.id === this.getTipByName(bettingPair, selectedTip).id)) {
                     this.removePairFromList(bettingPair);
                     this.addPairToList(bettingPair, selectedTip);
                 } else {

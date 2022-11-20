@@ -1,5 +1,5 @@
 <template>
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
         <div class="offcanvas-header">
             <h4>Administration</h4>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -17,7 +17,6 @@
                         data-bs-toggle="tab" data-bs-target="#wallet" @click="setAdministrationTab('wallet')"
                         type="button" role="tab" aria-controls="wallet" aria-selected="false">Wallet</button>
                 </li>
-
             </ul>
             <div class="tab-content">
                 <div :class="$store.getters.activeAdministrationTab == 'tickets' ? 'tab-pane fade show active' : 'tab-pane fade'"
@@ -26,30 +25,26 @@
                 </div>
                 <div :class="$store.getters.activeAdministrationTab == 'wallet' ? 'tab-pane fade show active' : 'tab-pane fade'"
                     id="wallet" role="tabpanel" aria-labelledby="wallet-tab">
-                    Wallet will be here
+                   <Wallet />
                 </div>
-
             </div>
-
         </div>
     </div>
 </template>
 <style>
-
 </style>
 <script lang="ts">
-
 import { defineComponent } from "vue";
 import TicketList from "./TicketList.vue";
-
+import Wallet from "./Wallet.vue"
 export default defineComponent({
     name: "offcanvas-component",
     components: {
-        TicketList
+        TicketList,
+        Wallet
     },
     data() {
         return {
-
         }
     },
     methods: {
@@ -58,4 +53,4 @@ export default defineComponent({
         }
     }
 });
-</script>z
+</script>

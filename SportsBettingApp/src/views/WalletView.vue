@@ -22,4 +22,4 @@ export default defineComponent({
         GlobalNotification
     }
 });
-</script>z
+</script>

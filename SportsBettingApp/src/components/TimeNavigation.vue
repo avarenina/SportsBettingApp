@@ -1,7 +1,6 @@
 <template>
     <div class="row">
         <div class="sport-days">
-
             <router-link class="day" to="/day/3h">3h</router-link>
             <router-link class="day" to="/day/6h">6h</router-link>
             <router-link class="day" to="/day/12h">12h</router-link>
@@ -10,10 +9,12 @@
                 {{ bettingDay.label }}
             </router-link>
             <router-link class="day" to="/day/all">ALL</router-link>
-            <a data-bs-toggle="offcanvas" href="#offcanvasExample" @click="setAdministrationTab('wallet')" role="button"
-        aria-controls="offcanvasExample" class="day" style="float:right;color:#f23535 !important;font-weight: 600;">Wallet</a>
-            <a data-bs-toggle="offcanvas" href="#offcanvasExample" @click="setAdministrationTab('tickets')" role="button"
-        aria-controls="offcanvasExample" class="day" style="float:right;color:#f23535 !important;font-weight: 600;">Tickets</a>
+            <a data-bs-toggle="offcanvas" href="#offcanvas" @click="setAdministrationTab('wallet')" role="button"
+                aria-controls="offcanvasExample" class="day"
+                style="float:right;color:#f23535 !important;font-weight: 600;">WALLET</a>
+            <a data-bs-toggle="offcanvas" href="#offcanvas" @click="setAdministrationTab('tickets')" role="button"
+                aria-controls="offcanvasExample" class="day"
+                style="float:right;color:#f23535 !important;font-weight: 600;">TICKETS</a>
         </div>
     </div>
 </template>
@@ -47,7 +48,6 @@
 </style>
 
 <script lang="ts">
-
 import { defineComponent } from 'vue';
 import DataService from "@/services/DataService";
 import ResponseData from "@/types/ResponseData";
@@ -57,7 +57,6 @@ import router from "@/router";
 export default defineComponent({
     name: "time-navigation",
     components: {
-
     },
     data() {
         return {
@@ -93,7 +92,8 @@ export default defineComponent({
     watch: {
         '$route'() {
             if (!this.$route.params.day) {
-                router.push('/day/all')
+                let currentDay = new Date().getDate()
+                router.push('/day/' + currentDay)
             } else {
                 this.setActiveDay(this.$route.params.day as string);
             }
@@ -102,7 +102,16 @@ export default defineComponent({
     mounted() {
         this.retrieveTimes();
         if (!this.$route.params.day) {
-            router.push('/day/all')
+            let currentDay = new Date().getDate()
+            router.push('/day/' + currentDay)
+        } else {
+            let activeDay = this.bettingDays.find((bd: BettingDay) => bd.queryStringId == this.$route.params.day);
+            if (activeDay) {
+                this.setActiveDay(this.$route.params.day as string);
+            }
+            else {
+                router.push('/day/all')
+            }
         }
     },
 });

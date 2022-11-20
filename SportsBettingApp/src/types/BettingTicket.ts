@@ -1,5 +1,5 @@
 import SelectedPair from "@/types/SelectedPair";
-
+import { WalletTransaction } from "@/types/WalletTransaction";
 export default interface BettingTicket {
     id?: number
     ticketPairs: SelectedPair [];
@@ -13,4 +13,5 @@ export default interface BettingTicket {
     taxAmount:number;
     payoutAmount: number;
     manipulationCost: number;
+    walletTransaction?: WalletTransaction;
 }
