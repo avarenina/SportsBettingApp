@@ -14,6 +14,9 @@ class DataService {
   getSpecialOffer(): Promise<any> {
     return http.get("/api/data/special-offer");
   }
+  getResults(): Promise<any> {
+    return http.get("/api/data/results");
+  }
 }
 
 export default new DataService();

@@ -25,7 +25,8 @@ namespace Infrastructure.Persistence
         public DbSet<Tip> Tips { get; set; }
         public DbSet<BettingTicket> BettingTickets { get; set; }
         public DbSet<TicketPair> TicketPairs { get; set; }
-        public DbSet<SpecialOffer> SpecialOffer { get; set; }
+        public DbSet<SpecialOffer> SpecialOffers { get; set; }
+        public DbSet<BettingPairResult> BettingPairResults { get; set; }
         #endregion
 
 
@@ -42,7 +43,11 @@ namespace Infrastructure.Persistence
         /// <param name="modelBuilder">The builder being used to construct the model for this context</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           
+            //modelBuilder.Entity<BettingPairResult>()
+            // .Property(e => e.WinningTips)
+            // .HasConversion(
+            //     v => string.Join(',', v),
+            //     v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
 
             base.OnModelCreating(modelBuilder);
         }

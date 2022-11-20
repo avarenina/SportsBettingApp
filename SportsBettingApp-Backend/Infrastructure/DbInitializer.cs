@@ -167,7 +167,7 @@ namespace Infrastructure.Data
                     FirstOpponent = "Hajduk",
                     SecondOpponent = "Dinamo",
                     CategoryId = 0,
-                    MatchStartUTC = DateTime.Now.AddMinutes(30),
+                    MatchStartUTC = DateTime.Now.AddMinutes(2),
                     Sport = sportToAdd,
                     Tips = new List<Tip>()
                     {
@@ -201,7 +201,7 @@ namespace Infrastructure.Data
                     FirstOpponent = "Varazdin",
                     SecondOpponent = "Splir",
                     CategoryId = 0,
-                    MatchStartUTC = DateTime.Now.AddDays(1),
+                    MatchStartUTC = DateTime.Now.AddMinutes(2),
                     Sport = sportToAdd,
                     Tips = new List<Tip>()
                     {
@@ -218,7 +218,7 @@ namespace Infrastructure.Data
                     FirstOpponent = "Varazdin",
                     SecondOpponent = "Zagreb",
                     CategoryId = 0,
-                    MatchStartUTC = DateTime.Now.AddDays(1),
+                    MatchStartUTC = DateTime.Now.AddMinutes(2),
                     Sport = sportToAdd,
                     Tips = new List<Tip>()
                     {
@@ -235,7 +235,7 @@ namespace Infrastructure.Data
                     FirstOpponent = "Zagreb",
                     SecondOpponent = "Sinj",
                     CategoryId = 0,
-                    MatchStartUTC = DateTime.Now.AddDays(1),
+                    MatchStartUTC = DateTime.Now.AddMinutes(2),
                     Sport = sportToAdd,
                     Tips = new List<Tip>()
                     {

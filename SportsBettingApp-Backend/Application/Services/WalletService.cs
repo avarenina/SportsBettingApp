@@ -34,10 +34,27 @@ namespace Application.Services
 
             return transactions;
         }
+        public IEnumerable<WalletTransaction> GetAllTransactions()
+        {
+            var transactions = _walletTransactionRepository.Table.ToList();
+
+            return transactions;
+        }
 
         public async Task<double> GetWalletBalanceFromTransactionsAsync()
         {
             var walletTransactions = await GetAllTransactionsAsync();
+            if (!walletTransactions.Any())
+                return 0d;
+
+            var totalAmount = walletTransactions.Sum(wt => wt.TransactionAmount);
+
+            return totalAmount;
+        }
+
+        public  double GetWalletBalanceFromTransactions()
+        {
+            var walletTransactions =  GetAllTransactions();
             if (!walletTransactions.Any())
                 return 0d;
 

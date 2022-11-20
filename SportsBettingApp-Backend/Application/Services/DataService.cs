@@ -13,14 +13,21 @@ namespace Application.Services
         private readonly IRepository<BettingDay> _bettingDayRepository;
         private readonly IRepository<BettingPair> _bettingPairRepository;
         private readonly IRepository<SpecialOffer> _specialOfferRepository;
+        private readonly IRepository<BettingPairResult> _bettingPairResultRepository;
 
-        public DataService(ILogger<DataService> logger, IRepository<BettingDay> bettingDayRepository, IRepository<Sport> sportRepository, IRepository<BettingPair> bettingPairRepository, IRepository<SpecialOffer> specialOfferRepository)
+        public DataService(ILogger<DataService> logger,
+            IRepository<BettingDay> bettingDayRepository,
+            IRepository<Sport> sportRepository,
+            IRepository<BettingPair> bettingPairRepository,
+            IRepository<SpecialOffer> specialOfferRepository,
+            IRepository<BettingPairResult> bettingPairResultRepository)
         {
             _logger = logger;
             _sportRepository = sportRepository;
             _bettingDayRepository = bettingDayRepository;
             _bettingPairRepository = bettingPairRepository;
             _specialOfferRepository = specialOfferRepository;
+            _bettingPairResultRepository = bettingPairResultRepository;
         }
 
 
@@ -51,6 +58,13 @@ namespace Application.Services
             var specialOffers = await _specialOfferRepository.Table.Include(bp => bp.BettingPair).Include(so => so.Tips).ToListAsync();
 
             return specialOffers;
+        }
+
+        public async Task<IEnumerable<BettingPairResult>> GetResultsAsync()
+        {
+            var results = await _bettingPairResultRepository.Table.Include(bp => bp.BettingPair).ToListAsync();
+
+            return results;
         }
     }
 }

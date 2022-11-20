@@ -35,7 +35,7 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
 builder.Services.AddScoped<DataService>();
 builder.Services.AddScoped<BettingService>();
 builder.Services.AddScoped<WalletService>();
-
+builder.Services.AddHostedService<ResultsService>();
 builder.Services.AddTransient<DbInitializer>();
 var app = builder.Build();
 

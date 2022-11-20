@@ -49,5 +49,12 @@ namespace WebApi.Controllers
         {
             return await _dataService.GetSpecialOfferAsync();
         }
+
+        [Route("results")]
+        [HttpGet]
+        public async Task<IEnumerable<BettingPairResult>> GetResultsAsync()
+        {
+            return await _dataService.GetResultsAsync();
+        }
     }
 }

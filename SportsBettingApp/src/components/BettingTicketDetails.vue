@@ -8,7 +8,7 @@
                     <div class="time">{{ new Date(pair.bettingPair.matchStartUTC).toLocaleString() }}</div>
                     <div class="stake">{{ pair.tip.stake }}</div>
                     <div class="selected-tip">{{ pair.tip.name }}</div>
-                    <div class="score">Not started</div>
+                    <div class="score">{{ displayResult(getResultForPair(pair.bettingPair)) }}</div>
                 </div>
 
             </div>
@@ -128,6 +128,10 @@
 import { defineComponent, PropType } from "vue";
 import BettingTicket from "@/types/BettingTicket";
 import { BModal } from "bootstrap-vue-3";
+import BettingPair from "@/types/BettingPair";
+import BettingPairResult from "@/types/BettingPairResult";
+import DataService from "@/services/DataService";
+import ResponseData from "@/types/ResponseData";
 
 export default defineComponent({
     props: {
@@ -142,7 +146,7 @@ export default defineComponent({
     data() {
         return {
             modalShow: false,
-
+            resultList: [] as BettingPairResult[]
         }
     },
     watch: {
@@ -151,6 +155,8 @@ export default defineComponent({
             handler(value) {
                 if(value.id)
                 {
+                    this.loadResults();
+
                     this.modalShow = true;
                 }
                 
@@ -178,6 +184,32 @@ export default defineComponent({
             });
             return formatter.format(value).replace("EUR", "").trim();
         },
+        loadResults() {
+            DataService.getResults()
+                .then((response: ResponseData) => {
+                    this.resultList = response.data
+                })
+                .catch((e: Error) => {
+                    this.$store.dispatch("showGlobalNotification", {
+                        id: 0,
+                        type: "danger",
+                        message: e,
+                        duration: 4000,
+                    });
+                });
+        },
+        displayResult(result: BettingPairResult)
+        {
+            if(result)
+            {
+                 return '(' + result.firstOpponentScore + ' - ' + result.secondOpponentScore + ')';
+            }
+           
+            return "Not started"
+        },
+        getResultForPair(bettingPair: BettingPair) : BettingPairResult {
+            return this.resultList.filter(r => r.bettingPair.id == bettingPair.id)[0];
+        }
     }
 });
 
