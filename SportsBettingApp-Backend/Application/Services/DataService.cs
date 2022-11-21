@@ -48,7 +48,7 @@ namespace Application.Services
 
         public async Task<IEnumerable<BettingPair>> GetBettingPairsAsync()
         {
-            var bettingPairs = await _bettingPairRepository.Table.Include(s => s.Sport).Include(s => s.Tips).ToListAsync();
+            var bettingPairs = await _bettingPairRepository.Table.Include(s => s.Sport).Include(s => s.Tips).OrderBy(bp => bp.MatchStartUTC).ToListAsync();
 
             return bettingPairs;
         }
