@@ -48,10 +48,12 @@
         'id time' 
 }
 
-.deposit {
+.win, .deposit {
     color: green;
 }
-
+.bet, .withdraw {
+    color: red;
+}
 .transaction-id {
     grid-area: id;
     align-self: center;

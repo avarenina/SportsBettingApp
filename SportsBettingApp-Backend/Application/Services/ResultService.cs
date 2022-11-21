@@ -55,8 +55,8 @@ namespace Application.Services
                 var bettingPairResult = new BettingPairResult
                 {
                     BettingPair = bettingPair,
-                    FirstOpponentScore = rand.Next(0, 1),
-                    SecondOpponentScore = rand.Next(0, 1)
+                    FirstOpponentScore = rand.Next(0, 10),
+                    SecondOpponentScore = rand.Next(0, 10)
                 };
 
                 // Mark tips as 
@@ -131,22 +131,18 @@ namespace Application.Services
 
                         _walletService.InsertTransaction(transaction);
 
-
-
+                        _logger.LogInformation("Betting ticket is a win.");
 
                     }
                    
                     _bettingTicketRepository.Update(ticket);
                 }
-
-
             }
 
 
 
 
-            _logger.LogInformation(
-                "Timed Hosted Service is working.");
+            
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

@@ -3,12 +3,15 @@
     <div>
         <b-modal size="lg" v-model="modalShow" title="Ticket details">
             <div class="pair-table">
-                <div v-for="pair in bettingTicket.ticketPairs" :key="pair.bettingPair.id" class="table-row">
-                    <div class="name">{{ pair.bettingPair.firstOpponent }} - {{ pair.bettingPair.secondOpponent }}</div>
-                    <div class="time">{{ new Date(pair.bettingPair.matchStartUTC).toLocaleString() }}</div>
-                    <div class="stake">{{ pair.tip.stake }}</div>
-                    <div class="selected-tip">{{ pair.tip.name }}</div>
-                    <div class="score">{{ displayResult(getResultForPair(pair.bettingPair)) }}</div>
+                <div v-for="pair in bettingTicket.ticketPairs" :key="pair.bettingPair.id" >
+                    <div :class="!getResultForPair(pair.bettingPair) ? 'table-row' : (pair.tip.name.includes(getResultForPair(pair.bettingPair).winningTip) ? 'table-row win' : 'table-row  lost')">
+                        <div class="name">{{ pair.bettingPair.firstOpponent }} - {{ pair.bettingPair.secondOpponent }}</div>
+                        <div class="time">{{ new Date(pair.bettingPair.matchStartUTC).toLocaleString() }}</div>
+                        <div class="stake">{{ pair.tip.stake }}</div>
+                        <div class="selected-tip">{{ pair.tip.name }}</div>
+                        <div class="score">{{ displayResult(getResultForPair(pair.bettingPair)) }}</div>
+                    </div>
+                    
                 </div>
 
             </div>
@@ -31,7 +34,13 @@
 
 </template>
 
-<style>
+<style scoped>
+.win {
+    background-color: green;
+}
+.lost {
+    background-color: red;
+}
 .info-ticket {
     box-sizing: border-box;
     color: rgb(45, 55, 62);
@@ -156,7 +165,6 @@ export default defineComponent({
                 if(value.id)
                 {
                     this.loadResults();
-
                     this.modalShow = true;
                 }
                 
@@ -208,7 +216,13 @@ export default defineComponent({
             return "Not started"
         },
         getResultForPair(bettingPair: BettingPair) : BettingPairResult {
-            return this.resultList.filter(r => r.bettingPair.id == bettingPair.id)[0];
+            let result = this.resultList.filter(r => r.bettingPair.id == bettingPair.id)
+            if(result)
+            {
+                return result[0]
+            }
+            
+            return null as unknown as BettingPairResult;
         }
     }
 });

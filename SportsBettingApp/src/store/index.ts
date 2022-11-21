@@ -1,15 +1,13 @@
 import { createStore } from "vuex";
-import DataService from "@/services/DataService";
 import Sport from "@/types/Sport";
-import ResponseData from "@/types/ResponseData";
 import BettingPair from "@/types/BettingPair";
-import Tip from "@/types/Tip";
 import SelectedPair from "@/types/SelectedPair";
 import GlobalNotification from "@/types/GlobalNotification";
 import BettingDay from "@/types/BettingDay";
 import BettingTicket from "@/types/BettingTicket";
 import { WalletTransaction } from "@/types/WalletTransaction";
 
+// TODO: Break it up into modules and refactor component to use map action/getters
 export default createStore({
   state: {
     sportsList: [] as Sport[],
@@ -22,35 +20,39 @@ export default createStore({
     globalNotifictationList: [] as GlobalNotification[],
     globalNotificationsIndex: 0,
     walletTransactionList: [] as WalletTransaction[],
+    appLoading: false,
   },
   mutations: {
-    UPDATE_SELECTED_PAIRS(state, payload) {
-      state.selectedPairsList = payload;
+    UPDATE_SELECTED_PAIRS(state, pairList: SelectedPair[]) {
+      state.selectedPairsList = pairList;
     },
-    UPDATE_SPORTS(state, payload) {
-      state.sportsList = payload;
-      state.activeSportsList = payload;
+    UPDATE_SPORTS(state, sportsList: Sport[]) {
+      state.sportsList = sportsList;
+      state.activeSportsList = sportsList;
     },
-    UPDATE_ACTIVE_SPORTS(state, payload) {
-      state.activeSportsList = payload;
+    UPDATE_ACTIVE_SPORTS(state, activeSportsList: Sport[]) {
+      state.activeSportsList = activeSportsList;
     },
-    UPDATE_ACTIVE_BETTING_DAY(state, payload) {
-      state.activeBettingDay = payload;
+    UPDATE_ACTIVE_BETTING_DAY(state, activeBettingDay: BettingDay) {
+      state.activeBettingDay = activeBettingDay;
     },
-    UPDATE_GLOBAL_NOTIFICATIONS(state, payload) {
-      state.globalNotifictationList = payload;
+    UPDATE_GLOBAL_NOTIFICATIONS(state, globalNotifictationList: GlobalNotification[]) {
+      state.globalNotifictationList = globalNotifictationList;
     },
-    UPDATE_ADMINISTRATION_TAB(state, payload) {
-      state.administrationTab = payload;
+    UPDATE_ADMINISTRATION_TAB(state, administrationTab: string) {
+      state.administrationTab = administrationTab;
     },
-    UPDATE_BETTING_TICKETS(state, payload) {
-      state.bettingTicketsList = payload;
+    UPDATE_BETTING_TICKETS(state, bettingTicketsList: BettingTicket[]) {
+      state.bettingTicketsList = bettingTicketsList;
     },
-    UPDATE_AVAILABLE_FUNDS(state, payload) {
-      state.walletAvailableFunds = payload;
+    UPDATE_AVAILABLE_FUNDS(state, walletAvailableFunds: number) {
+      state.walletAvailableFunds = walletAvailableFunds;
     },
-    UPDATE_TRANSACTION_LIST(state, payload) {
-      state.walletTransactionList = payload;
+    UPDATE_TRANSACTION_LIST(state, walletTransactionList: WalletTransaction[]) {
+      state.walletTransactionList = walletTransactionList;
+    },
+    UPDATE_APP_LOADING(state, status: boolean) {
+      state.appLoading = status;
     },
   },
   actions: {
@@ -80,19 +82,19 @@ export default createStore({
       context.commit("UPDATE_SELECTED_PAIRS", selectedPairsList);
     },
 
-    showGlobalNotification(context, payload) {
-      payload.id = context.state.globalNotificationsIndex++;
+    showGlobalNotification(context, globalNotification: GlobalNotification) {
+      globalNotification.id = context.state.globalNotificationsIndex++;
 
       const notificationList = context.state.globalNotifictationList;
-      notificationList.push(payload);
+      notificationList.push(globalNotification);
       context.commit("UPDATE_GLOBAL_NOTIFICATIONS", notificationList);
 
       setTimeout(() => {
         const notificationList = context.state.globalNotifictationList.filter(
-          (m) => m.id !== payload.id
+          (m) => m.id !== globalNotification.id
         );
         context.commit("UPDATE_GLOBAL_NOTIFICATIONS", notificationList);
-      }, payload.duration);
+      }, globalNotification.duration);
     },
     setActiveDay(context, activeDay: BettingDay) {
       context.commit("UPDATE_ACTIVE_BETTING_DAY", activeDay);
@@ -120,6 +122,9 @@ export default createStore({
       const transactionsList = context.state.walletTransactionList;
       transactionsList.unshift(newTransaction);
       context.commit("UPDATE_TRANSACTION_LIST", transactionsList);
+    },
+    updateAppLoadingStatus(context, status: boolean) {
+      context.commit("UPDATE_APP_LOADING", status);
     },
   },
   getters: {
@@ -149,6 +154,9 @@ export default createStore({
     },
     walletTransactionList: function (state) : WalletTransaction[] {
       return state.walletTransactionList;
+    },
+    appLoading: function (state) : boolean {
+      return state.appLoading;
     }
   },
 });

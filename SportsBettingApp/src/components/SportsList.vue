@@ -102,7 +102,7 @@
     white-space: nowrap;
     text-align: center;
     padding: 0 4px;
-    min-width: 34px;
+    min-width: 45px;
 }
 
 .td-shrink {
@@ -162,11 +162,14 @@ export default defineComponent({
     },
     methods: {
         retrieveBettingPairs() {
+
+            this.$store.dispatch("updateAppLoadingStatus", true);
             DataService.getBettingPairs()
                 .then((response: ResponseData) => {
                     this.bettingPairs = response.data;
                     console.log(response.data)
                     this.filterBettingPairs();
+                    this.$store.dispatch("updateAppLoadingStatus", false);
                 })
                 .catch((e: Error) => {
                     console.log(e);
@@ -176,6 +179,7 @@ export default defineComponent({
                         message: e,
                         duration: 4000,
                     });
+                    this.$store.dispatch("updateAppLoadingStatus", false);
                 });
         },
         getTipByName(bettingPair: BettingPair, name: string) : Tip{

@@ -9,7 +9,7 @@
                 </div>
             </div>
         </nav>
-        <div v-if="isAppLoading" class="loader-container">
+       <div class="loader-container" :style="$store.getters.appLoading === true ? 'display:block' : 'display:none'">
             <div class="spinner">
                 <div></div>
                 <div></div>
@@ -17,7 +17,10 @@
                 <div></div>
             </div>
         </div>
-        <router-view v-else />
+        <div :style="$store.getters.appLoading === true ? 'display:none' : 'display:block'">
+            <router-view />
+        </div>
+        
     </div>
 </template>
 
@@ -83,9 +86,10 @@
 export default {
     data() {
         return {
-            isAppLoading: false,
+            isAppLoading: true,
 
         };
     },
+    
 }
 </script>

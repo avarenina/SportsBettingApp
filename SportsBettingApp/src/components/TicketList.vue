@@ -14,10 +14,8 @@
                             <span class="icon icon-arrow">
                                 <font-awesome-icon icon="fa-solid fa-arrow-right" />
                             </span>
-                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Possible win amount">
-                                <font-awesome-icon icon="fa-solid fa-money-bills" /> {{
-                                        formatPrice(bettingTicket.winAmount)
-                                }} €
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Possible win amount" :class="bettingTicket.isCompleted ? (bettingTicket.isWinningTicket ? 'win' : 'lost') : ''">
+                                <font-awesome-icon icon="fa-solid fa-money-bills" /> {{ formatPrice(bettingTicket.winAmount)}} €
                             </span>
 
                         </div>
@@ -41,14 +39,19 @@
     </div>
     <BettingTicketDetails :bettingTicket="selectedBettingTicket" @modalClosed="modalCloseCallback" />
 </template>
-<style>
+<style scoped>
 .grid-container {
     display: grid;
     grid-template-areas:
         'info info info info icon'
         'info info info info icon'
 }
-
+.win {
+    color: green;
+}
+.lost {
+    color: red;
+}
 .icon {
     margin-right: 5px;
 }

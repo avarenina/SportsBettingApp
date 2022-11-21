@@ -82,8 +82,7 @@
       </div>
     </div>
   </div>
-  <div v-for="pair in $store.getters.selectedPairsList" :key="pair.bettingPair.id">
-  {{pair}}</div>
+ 
 </template>
 <style>
 .pair-name {
@@ -479,12 +478,24 @@ export default defineComponent({
       this.$store.dispatch("showGlobalNotification", notification);
     },
     formatDate(date: string) {
-      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-      const d = new Date(date);
+            const d = new Date(date);
+            let hours = d.getHours().toString();
+            let minutes = d.getMinutes().toString();
+            // prepend zero
+            if(!hours.startsWith('0') && hours.length == 1)
+            {
+                hours = '0' + hours;
+            }
 
-      return days[d.getDay()] + ", " + d.getHours() + ":" + d.getMinutes();
-    },
+            if(!minutes.startsWith('0') && minutes.length == 1)
+            {
+                minutes = '0' + minutes;
+            }
+
+            return days[d.getDay()] + ", " + hours + ":" + minutes;
+        },
     placeBet() {
       BettingService.placeBet(this.bettingTicket).then((response) => {
           // We have succesifully placed a ticket
